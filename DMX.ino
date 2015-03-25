@@ -3,7 +3,7 @@
 
 void setupDMX() {
   // dmx board setup
-//DmxSimple.usePin(2);
+  DmxSimple.usePin(2);
   DmxSimple.maxChannel(30);
   
   // setup push button on dmx shield

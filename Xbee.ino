@@ -1,4 +1,4 @@
-#define MY_POLE 8
+#define MY_POLE 1
 
 XBee xbee = XBee();
 
@@ -8,7 +8,10 @@ XBeeAddress64 pole1address = XBeeAddress64(0x0013a200, 0x408d9e0e);  // pole 1
 XBeeAddress64 pole2address = XBeeAddress64(0x0013a200, 0x409140b6);  // pole 2
 XBeeAddress64 pole3address = XBeeAddress64(0x0013a200, 0x40914018);  // pole 3
 XBeeAddress64 pole4address = XBeeAddress64(0x0013a200, 0x408d9e5f);  // pole 4
-XBeeAddress64 pole5address = XBeeAddress64(0x0013a200, 0x409140b1);  // pole 5
+XBeeAddress64 pole5address = XBeeAddress64(0x0013a200, 0x409140b1);  // pole 5 - is this really pole 5?
+// XBeeAddress64 pole5address = XBeeAddress64(0x0013a200, 0x409140b1);  // pole 6
+// XBeeAddress64 pole5address = XBeeAddress64(0x0013a200, 0x409140b1);  // pole 7
+// XBeeAddress64 pole5address = XBeeAddress64(0x0013a200, 0x409140b1);  // pole 8
 
 // message / string
 uint8_t buttonPressed[] = {MY_POLE, 'b'};
