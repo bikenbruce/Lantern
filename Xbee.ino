@@ -58,7 +58,7 @@ void sendMessage(ZBTxRequest pole) {
   }
 }
 
-void readXbee() {
+int readXbee() {
   xbee.readPacket();
   
   if (xbee.getResponse().isAvailable()) {
@@ -69,6 +69,8 @@ void readXbee() {
       
       // fill out zb rx class
       xbee.getResponse().getZBRxResponse(rx);
+      
+      return 1;
       
       Serial.println(rx.getData(0));
       Serial.println(rx.getData(1));

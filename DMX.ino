@@ -4,7 +4,7 @@
 void setupDMX() {
   // dmx board setup
   DmxSimple.usePin(2);
-  DmxSimple.maxChannel(30);
+  DmxSimple.maxChannel(40);
   
   // setup push button on dmx shield
   pinMode(DMX_PUSH_BUTTON_PIN, INPUT);
@@ -40,4 +40,6 @@ void setDMXBoardLED(boolean state) {
   
   }
 }
+
+
 

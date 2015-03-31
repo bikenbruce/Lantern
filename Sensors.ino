@@ -1,4 +1,27 @@
 
+// Sensors
+const int cs = 53; //chip select
+int led13pin = 13; int inLedpin = 34; int exLedpin = 24;
+
+//digital inputs
+int bigBtnpin = 28; int pir2pin = 32; int pir1pin = 36; 
+
+//  ir receiever pin
+int irPin = 26;
+int start_bit = 2200; //Start bit threshold (Microseconds)
+int bin_1 = 1000; //Binary 1 threshold (Microseconds)
+int bin_0 = 400; //Binary 0 threshold (Microseconds)
+boolean ledtoggle = HIGH;
+
+//analogs ins
+int knockApin = 12;  int inTempApin =13; int exTempApin =14; int sonicApin = 15;
+
+int dArrRaw[] = {0,0,0};
+//items are btn, pir1, pir2
+
+int anaArrRaw[] = {0,0,0,0};
+// items are knock, sonic, intemp, extemp
+
 /////////////////////////// Reading inputs
 
 void setupSensors() {
