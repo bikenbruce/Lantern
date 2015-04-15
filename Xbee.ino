@@ -3,18 +3,21 @@
 XBee xbee = XBee();
 
 // xbee addresses
-XBeeAddress64 coordinator  = XBeeAddress64(0x0013a200, 0x407054ac);  // coordinator
+XBeeAddress64 Broadcast = XBeeAddress64(0x00000000, 0x0000ffff);
+
+// XBeeAddress64 coordinator  = XBeeAddress64(0x0013a200, 0x407054ac);  // coordinator @ steve's house
+XBeeAddress64 coordinator  = XBeeAddress64(0x0013a200, 0x408CDB42);  // coordinator @ SJSU
 XBeeAddress64 pole1address = XBeeAddress64(0x0013a200, 0x408d9e0e);  // pole 1
 XBeeAddress64 pole2address = XBeeAddress64(0x0013a200, 0x409140b6);  // pole 2
 XBeeAddress64 pole3address = XBeeAddress64(0x0013a200, 0x40914018);  // pole 3
 XBeeAddress64 pole4address = XBeeAddress64(0x0013a200, 0x408d9e5f);  // pole 4
-XBeeAddress64 pole5address = XBeeAddress64(0x0013a200, 0x409140b1);  // pole 5 - is this really pole 5?
-// XBeeAddress64 pole5address = XBeeAddress64(0x0013a200, 0x409140b1);  // pole 6
-// XBeeAddress64 pole5address = XBeeAddress64(0x0013a200, 0x409140b1);  // pole 7
-// XBeeAddress64 pole5address = XBeeAddress64(0x0013a200, 0x409140b1);  // pole 8
+XBeeAddress64 pole5address = XBeeAddress64(0x0013a200, 0x409140b1);  // pole 5
+XBeeAddress64 pole6address = XBeeAddress64(0x0013a200, 0x409140b1);  // pole 6
+XBeeAddress64 pole7address = XBeeAddress64(0x0013a200, 0x409140b1);  // pole 7
+XBeeAddress64 pole8address = XBeeAddress64(0x0013a200, 0x409140b1);  // pole 8
 
 // message / string
-uint8_t buttonPressed[] = {MY_POLE, 'b'};
+uint8_t buttonPressed[] = {'1', 'b','a','d'};
 
 //address with message
 extern ZBTxRequest msgToCoordinator = ZBTxRequest(coordinator, buttonPressed, sizeof(buttonPressed));
@@ -23,6 +26,9 @@ extern ZBTxRequest msgToPole2       = ZBTxRequest(pole2address, buttonPressed, s
 extern ZBTxRequest msgToPole3       = ZBTxRequest(pole3address, buttonPressed, sizeof(buttonPressed));
 extern ZBTxRequest msgToPole4       = ZBTxRequest(pole4address, buttonPressed, sizeof(buttonPressed));
 extern ZBTxRequest msgToPole5       = ZBTxRequest(pole5address, buttonPressed, sizeof(buttonPressed));
+extern ZBTxRequest msgToPole6       = ZBTxRequest(pole6address, buttonPressed, sizeof(buttonPressed));
+extern ZBTxRequest msgToPole7       = ZBTxRequest(pole7address, buttonPressed, sizeof(buttonPressed));
+extern ZBTxRequest msgToPole8       = ZBTxRequest(pole8address, buttonPressed, sizeof(buttonPressed));
 
 ZBTxStatusResponse txStatus = ZBTxStatusResponse();
 ZBRxResponse rx = ZBRxResponse();
@@ -47,11 +53,11 @@ void sendMessage(ZBTxRequest pole) {
       // get the delivery status, the fifth byte
       if (txStatus.getDeliveryStatus() == SUCCESS) {
         // success.  time to celebrate
-        Serial.print("message received\n");
+        Serial.print("confirmation received\n");
         
       } else {
         // the remote XBee did not receive our packet. is it powered on?
-        Serial.print("message not received\n");
+        Serial.print("confirmation not received\n");
         
       }
     }
@@ -70,6 +76,7 @@ int readXbee() {
       // fill out zb rx class
       xbee.getResponse().getZBRxResponse(rx);
       
+      Serial.print("message received\n");     
       return 1;
       
       Serial.println(rx.getData(0));

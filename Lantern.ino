@@ -1,6 +1,7 @@
 #include <DmxSimple.h>
 #include <XBee.h>
 #include <SPI.h>
+#include <SoftwareSerial.h>
 
 // Xbee messages
 extern ZBTxRequest msgToCoordinator;
@@ -19,37 +20,39 @@ void setup() {
   Serial.begin(115200);
   Serial.println("SETUP Start");
   
-  setupDMX();
+  // setupDMX();
   setupXbee();
-  setupSensors();
+  // setupSensors();
   
 }
 
 void loop() {
   // button pressed.... send a message
-//  if (readDMXButtonStatus()) {
-//    if (messageState == 0) {
+  if (readDMXButtonStatus()) {
+    if (messageState == 0) {
 //      // send message
 //      sendMessage(msgToCoordinator);
 //      sendMessage(msgToPole1);
 //      sendMessage(msgToPole2);
 //      sendMessage(msgToPole3);
-//      //sendMessage(msgToPole4);
-//      //sendMessage(msgToPole5);
-//      
-//      setDMXBoardLED(true);
-//      messageState = 1;
-//    } else {
-//      setDMXBoardLED(false);
-//    }
+//      sendMessage(msgToPole4);
+//      sendMessage(msgToPole5);
+        sendMessage(msgToCoordinator);
+//      Serial.print("Button Pressed.\n");
+      
+      setDMXBoardLED(true);
+      messageState = 1;
+    } else {
+      setDMXBoardLED(false);
+    }
 //    
-//  } else {
-//    if (messageState == 1) {
-//      messageState = 0;
-//      setDMXBoardLED(false);
-//    }
+  } else {
+    if (messageState == 1) {
+      messageState = 0;
+      setDMXBoardLED(false);
+    }
 //    
-//  }
+  }
     
   // read messages
   readXbee();
@@ -57,20 +60,24 @@ void loop() {
   
   // make the lights.
   frameCount = frameCount + frameRate;
-  lightUp(frameCount);
+  //lightUp(frameCount);
   
   // reset frame count
-  if (frameCount > 150) {
+  if (frameCount > 1000) {
     frameCount = 0;
   }
   
   if (frameCount == 30) {
-    sendMessage(msgToPole2);
+    //sendMessage(msgToPole2);
   }
   
   if (frameCount == 70) {
-    sendMessage(msgToPole3);
+    //sendMessage(msgToPole3);
+  }
+ 
+  if (frameCount == 100) {
+    //sendMessage(msgToCoordinator);
   }
   
-  delay(50);
+  delay(5);
 }
