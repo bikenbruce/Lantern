@@ -77,11 +77,11 @@ int readXbee() {
       xbee.getResponse().getZBRxResponse(rx);
       
       Serial.print("message received\n");     
-      return 1;
       
       Serial.println(rx.getData(0));
-      Serial.println(rx.getData(1));
-            
+      // Serial.println(rx.getData(1));
+      
+      return 1;
     }
   }
 }

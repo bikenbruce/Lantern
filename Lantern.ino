@@ -67,16 +67,8 @@ void loop() {
     frameCount = 0;
   }
   
-  if (frameCount == 30) {
-    //sendMessage(msgToPole2);
-  }
-  
-  if (frameCount == 70) {
-    //sendMessage(msgToPole3);
-  }
- 
   if (frameCount == 100) {
-    //sendMessage(msgToCoordinator);
+    sendMessage(msgToCoordinator);
   }
   
   delay(5);
