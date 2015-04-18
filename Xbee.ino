@@ -74,7 +74,7 @@ int readXbee() {
       // fill out zb rx class
       xbee.getResponse().getZBRxResponse(rx);
       
-      Serial.print("message received\n");
+      // Serial.print("message received\n");
 
       // Serial Data
       // 0 = if 30, then this is a cmd to set the board color
@@ -82,7 +82,21 @@ int readXbee() {
       // 2 = which color, 1 = Red, 2 = Green, 3 = Blue
       // 3 = Value / brightness of color
 
-      if (rx.getData(0) == 30) {
+
+
+      Serial.print("length: ");
+      Serial.println(rx.getDataLength());
+
+      for (int i = 0; i < rx.getDataLength(); i++) {
+        Serial.print(i);
+        Serial.print(" ");
+        Serial.print(rx.getData(i));
+        Serial.println();
+      }
+
+      Serial.println("");
+
+      if (rx.getData(0) == 30) {        
         Serial.print("Set Board: ");
         Serial.print(rx.getData(1));
         Serial.print(" Color: ");
