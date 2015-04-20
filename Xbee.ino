@@ -17,7 +17,7 @@ XBeeAddress64 pole7address = XBeeAddress64(0x0013a200, 0x409140b1);  // pole 7
 XBeeAddress64 pole8address = XBeeAddress64(0x0013a200, 0x409140b1);  // pole 8
 
 // message / string
-uint8_t buttonPressed[] = {'1', 'b','a','d'};
+uint8_t buttonPressed[] = {25,1,'b',255};
 
 //address with message
 extern ZBTxRequest msgToCoordinator = ZBTxRequest(coordinator, buttonPressed, sizeof(buttonPressed));
@@ -76,50 +76,102 @@ int readXbee() {
       
       // Serial.print("message received\n");
 
-      // Serial Data
-      // 0 = if 30, then this is a cmd to set the board color
-      // 1 = which board, 1 through 10
-      // 2 = which color, 1 = Red, 2 = Green, 3 = Blue
-      // 3 = Value / brightness of color
+      // Serial.print("length: ");
+      // Serial.println(rx.getDataLength());
 
+      switch (rx.getData(0)) {
+        case 0:
+          // get time
+          Serial.println("0");
+          break;
 
+        case 1:
+          // set time and return new time
+          Serial.println("1");
+          break;
 
-      Serial.print("length: ");
-      Serial.println(rx.getDataLength());
+        case 2:
+          // what is the temperature
+          Serial.println("2");
+          break;
 
-      for (int i = 0; i < rx.getDataLength(); i++) {
-        Serial.print(i);
-        Serial.print(" ");
-        Serial.print(rx.getData(i));
-        Serial.println();
+        case 3:
+          // nothing at this point
+          Serial.println("3");
+          break;
+
+        case 4:
+          // what is the start time for day of week?
+          Serial.println("4");
+          break;
+
+        case 5:
+          // what is the stop time for day of week?
+          Serial.println("5");
+          break;
+
+        case 6:
+          // set start time for day of week
+          Serial.println("6");
+          break;
+
+        case 7:
+          // set stop time for day of week
+          Serial.println("7");
+          break;
+
+        case 8:
+          // nothing at this point
+          Serial.println("8");
+          break;
+
+        case 9:
+          // nothing at this point
+          Serial.println("9");
+          break;
+
+        case 10:
+          // nothing at this point
+          Serial.println("10");
+          break;
+
+        case 11:
+          // nothing at this point
+          Serial.println("11");
+          break;
+
+        case 12:
+          // nothing at this point
+          Serial.println("12");
+          break;
+
+        case 30:
+          // Set a Board, R/G/B, Value
+          Serial.print("Set Board: ");
+          Serial.print(rx.getData(1));
+          Serial.print(" Color: ");
+          Serial.print(rx.getData(2));
+          Serial.print(" Value: ");
+          Serial.println(rx.getData(3));
+
+          DmxSimple.write((rx.getData(1) - 1) * 4 + rx.getData(2), rx.getData(3));
+          DmxSimple.write(11, 255);
+          break;
+
+        case 31:
+          // All Off
+          allOff();
+          break;
+
+        case 32:
+          // off on
+          allOn();
+          break;
+
+        default:
+          Serial.println("Crap!");
+          // Oups!
       }
-
-      Serial.println("");
-
-      if (rx.getData(0) == 30) {        
-        Serial.print("Set Board: ");
-        Serial.print(rx.getData(1));
-        Serial.print(" Color: ");
-        Serial.print(rx.getData(2));
-        Serial.print(" Value: ");
-        Serial.println(rx.getData(3));
-
-        DmxSimple.write((rx.getData(1) - 1) * 4 + rx.getData(2), rx.getData(3));
-        DmxSimple.write(11, 255);
-
-      }
-
-      if (rx.getData(0) == 31) {
-        allOff();
-
-      }
-
-      if (rx.getData(0) == 32) {
-        allOn();
-
-      }
-            
-      
     }
   }
 }
