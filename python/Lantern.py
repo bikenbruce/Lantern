@@ -27,6 +27,8 @@ class XbeePoleControl:
 			8: "",
 			9: ""
 		}
+		self.status = 0
+		self.last_time_check = 0
 
 		# setup USB port with xbee on it.
 		usb_ports = glob("/dev/tty.usbserial-*")
@@ -39,10 +41,6 @@ class XbeePoleControl:
 
 		self.baud = 115200
 
-		# self.number = number
-		# self.mac = self.poles[self.number]
-		
-
 	def open(self):
 		self.serial = Serial(self.usb_port, self.baud)
 		self.xbee   = ZigBee(self.serial, escaped=True)
@@ -51,11 +49,16 @@ class XbeePoleControl:
 		self.serial.close()
 
 	def send(self, destination, message):
-		if len(self.short[1]) == 0:
+		if len(self.short[destination]) == 0:
 			print 'first send'
 			self.xbee.send("tx", data="\xff", dest_addr_long=self.long[destination], dest_addr="\xff\xfe")
 			response = self.xbee.wait_read_frame()
+
 			print response
+			if response['discover_status'] == '\x01':
+				print '1' # False / failed
+			elif response['discover_status'] == '\x00':
+				print '0' # True / success
 
 			self.short[destination] = response["dest_addr"]
 		else:
@@ -64,6 +67,3 @@ class XbeePoleControl:
 			response = self.xbee.wait_read_frame()
 			print response
 		
-
-
-
