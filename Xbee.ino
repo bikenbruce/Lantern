@@ -150,7 +150,7 @@ int readXbee() {
           Serial.print("push button event received from pole ");
           Serial.print(rx.getData(1));
           Serial.print(" with velocity of ");
-          Serial.print(rx.getData(2));
+          Serial.println(rx.getData(2));
           // rx.getData(1) pole from
           // rx.getData(2) velocity
           break;
