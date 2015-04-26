@@ -4,7 +4,9 @@
 #include <SoftwareSerial.h>
 
 // Xbee messages
-extern ZBTxRequest msgToCoordinator;
+extern ZBTxRequest msgToBroadcast;
+extern ZBTxRequest msgToCoordinatorSJ;
+extern ZBTxRequest msgToCoordinatorSD;
 extern ZBTxRequest msgToPole1;
 extern ZBTxRequest msgToPole2;
 extern ZBTxRequest msgToPole3;
@@ -14,8 +16,7 @@ extern ZBTxRequest msgToPole6;
 extern ZBTxRequest msgToPole7;
 extern ZBTxRequest msgToPole8;
 
-//int frameCount = 0;
-int frameRate = 1;
+int frameCount = 0;
 
 void setup() {
   //setup logging
@@ -25,14 +26,21 @@ void setup() {
   setupDMX();
   setupXbee();
   setupSensors();
-
-  //allOff();
   
 }
 
 void loop() {    
   // read messages
   readXbee();
+  //readXbeeStatus();
+
+  frameCount += 1;
+  if (frameCount > 100) {
+    frameCount = 0;
+    Serial.println("Sending Broadcast Message");
+    sendXbee(msgToBroadcast);
+
+  }
   
-  //delay(5);
+  delay(50);
 }

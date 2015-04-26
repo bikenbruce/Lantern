@@ -13,6 +13,7 @@ class XbeePole:
 class XbeePoleControl:
 	def __init__(self):
 		self.long = {
+			0: "\x00\x00\x00\x00\x00\x00\xFF\xFF",
 			1: "\x00\x13\xA2\x00\x40\x8D\x9E\x0E",
 			2: "\x00\x13\xA2\x00\x40\x91\x40\xB6",
 			3: "\x00\x13\xA2\x00\x40\x91\x40\x18",
@@ -25,6 +26,7 @@ class XbeePoleControl:
 		}
 
 		self.short = {
+			0: "",
 			1: "",
 			2: "",
 			3: "",
@@ -75,3 +77,7 @@ class XbeePoleControl:
 			print 'communication not received by pole ' + str(destination) + '.' # False / failed
 		elif response['discover_status'] == '\x00':
 			print 'commuincation received by pole ' + str(destination) + '.' # True / success
+
+	def read(self):
+		response = self.xbee.wait_read_frame()
+		print response
