@@ -2,6 +2,14 @@ from serial import Serial
 from xbee import ZigBee
 from glob import glob
 
+class XbeePole:
+	def __init__(self):
+		self.pole = 0
+		self.long = 0
+		self.short = 0
+		self.status = -1
+		self.last_attempt = 0
+
 class XbeePoleControl:
 	def __init__(self):
 		self.long = {
@@ -50,20 +58,20 @@ class XbeePoleControl:
 
 	def send(self, destination, message):
 		if len(self.short[destination]) == 0:
-			print 'first send'
+			print 'first send to pole ' + str(destination) + '.'
 			self.xbee.send("tx", data="\xff", dest_addr_long=self.long[destination], dest_addr="\xff\xfe")
 			response = self.xbee.wait_read_frame()
 
-			print response
-			if response['discover_status'] == '\x01':
-				print '1' # False / failed
-			elif response['discover_status'] == '\x00':
-				print '0' # True / success
-
+			# print response
 			self.short[destination] = response["dest_addr"]
+
 		else:
-			print 'second send'
+			print 'second send to pole ' + str(destination) + '.'
 			self.xbee.send("tx", data=message, dest_addr_long=self.long[destination], dest_addr=self.short[destination])
 			response = self.xbee.wait_read_frame()
-			print response
+			# print response
 		
+		if response['discover_status'] == '\x01':
+			print 'communication not received by pole ' + str(destination) + '.' # False / failed
+		elif response['discover_status'] == '\x00':
+			print 'commuincation received by pole ' + str(destination) + '.' # True / success

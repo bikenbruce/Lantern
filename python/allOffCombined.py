@@ -3,11 +3,11 @@ from xbee import ZigBee
 import time
 
 # SJSU Controller
-PORT = PORT='/dev/tty.usbserial-A600eIdg'
+#PORT = PORT='/dev/tty.usbserial-A600eIdg'
 
 # Steve's Controller
-# PORT='/dev/tty.usbserial-A600eIcJ'
-BAUD_RATE = 9600
+PORT='/dev/tty.usbserial-A600eIcJ'
+BAUD_RATE = 115200
 
 ser = serial.Serial(PORT, BAUD_RATE)
 xbee = ZigBee(ser,escaped=True)

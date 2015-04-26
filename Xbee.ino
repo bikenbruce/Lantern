@@ -34,7 +34,7 @@ ZBTxStatusResponse txStatus = ZBTxStatusResponse();
 ZBRxResponse rx = ZBRxResponse();
 
 void setupXbee() {
-  Serial3.begin(9600);
+  Serial3.begin(115200);
   xbee.setSerial(Serial3);
   
 }
@@ -74,7 +74,7 @@ int readXbee() {
       // fill out zb rx class
       xbee.getResponse().getZBRxResponse(rx);
       
-      // Serial.print("message received\n");
+      //Serial.print("message received\n");
 
       // Serial.print("length: ");
       // Serial.println(rx.getDataLength());
@@ -145,6 +145,16 @@ int readXbee() {
           Serial.println("12");
           break;
 
+        case 13:
+          // push button event
+          Serial.print("push button event received from pole ");
+          Serial.print(rx.getData(1));
+          Serial.print(" with velocity of ");
+          Serial.print(rx.getData(2));
+          // rx.getData(1) pole from
+          // rx.getData(2) velocity
+          break;
+
         case 30:
           // Set a Board, R/G/B, Value
           Serial.print("Set Board: ");
@@ -169,7 +179,8 @@ int readXbee() {
           break;
 
         default:
-          Serial.println("Crap!");
+          Serial.print("Nothing set for this value, which is ");
+          Serial.println(rx.getData(0));
           // Oups!
       }
     }
