@@ -9,6 +9,7 @@ class XbeePole:
 		self.short = 0
 		self.status = -1
 		self.last_attempt = 0
+		self.name = ""
 
 class XbeePoleControl:
 	def __init__(self):
@@ -81,3 +82,7 @@ class XbeePoleControl:
 	def read(self):
 		response = self.xbee.wait_read_frame()
 		print response
+
+
+# Broadcast event received by python example:
+# {'source_addr_long': '\x00\x13\xa2\x00@\x91@\x18', 'rf_data': '\x0e\x01\xff', 'source_addr': '\x9e\xc5', 'id': 'rx', 'options': '\x02'}

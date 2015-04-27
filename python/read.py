@@ -11,6 +11,7 @@ try:
 	while True:
 		control.read()
 except KeyboardInterrupt:
+	print "stop!"
 	pass
 
 control.close()

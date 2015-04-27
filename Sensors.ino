@@ -37,11 +37,13 @@ void setupSensors() {
   pinMode(pir2pin, INPUT); 
   pinMode(pir1pin, INPUT); 
   pinMode(irPin, INPUT);
+
+
   
 }
 
 
-void readSensors() {
+int readSensors() {
   //digital inputs
   dArrRaw[0] = digitalRead(bigBtnpin);
   dArrRaw[1] = digitalRead(pir1pin);
@@ -59,32 +61,34 @@ void readSensors() {
   float outtemp = (anaArrRaw[3] * .004882814);  //getting the voltage reading from the temperature sensor
   outtemp = (((outtemp - .5) * 100) * 1.8)+32; 
  
-  Serial.print(ReadTimeDate()); // Print out time in month/day/year
-  Serial.print(" pz-"); // Print out ana value for piezo(knock) sensor from big button
-  Serial.print(anaArrRaw[0]); 
-  Serial.print(" bn-"); // Print out dig value from big button
-  Serial.print( dArrRaw[0]);
+  // Serial.print(ReadTimeDate()); // Print out time in month/day/year
+  // Serial.print(" pz-"); // Print out ana value for piezo(knock) sensor from big button
+  // Serial.print(anaArrRaw[0]); 
+  //Serial.print(" bn-"); // Print out dig value from big button
+  //Serial.print(dArrRaw[0]);
  
-  Serial.print(" it-"); // Print out ana value from internal temp sensor
-  Serial.print(intemp);
-  Serial.print(" et-"); // Print out ana value from internal temp sensor
-  Serial.print(outtemp);
+  // Serial.print(" it-"); // Print out ana value from internal temp sensor
+  // Serial.print(intemp);
+  // Serial.print(" et-"); // Print out ana value from internal temp sensor
+  // Serial.print(outtemp);
  
-  Serial.print(" u-"); // Print out ana value from ultrasonic sensor
-  Serial.print(anaArrRaw[1]);
+  // Serial.print(" u-"); // Print out ana value from ultrasonic sensor
+  // Serial.print(anaArrRaw[1]);
  
-  Serial.print(" p1-"); // Print out digital value from passive Ir sensor #1
-  Serial.print( dArrRaw[1]);
+  // Serial.print(" p1-"); // Print out digital value from passive Ir sensor #1
+  // Serial.print( dArrRaw[1]);
  
-  Serial.print(" p2-");  // Print out digital value from passive Ir sensor #2
-  Serial.print( dArrRaw[2]);
-  Serial.print(" ir-"); // Print out key value from Ir coded reciever
+  // Serial.print(" p2-");  // Print out digital value from passive Ir sensor #2
+  // Serial.print( dArrRaw[2]);
+  // Serial.print(" ir-"); // Print out key value from Ir coded reciever
   int val = digitalRead(irPin);
   //int key = getIRKey();
-  Serial.print(val);
+  // Serial.print(val);
   // Serial.print(key);
-  Serial.println("--");	
-  delay(30);
+  //Serial.println("--");	
+  // delay(30);
+
+  return dArrRaw[0];
 }
 
   

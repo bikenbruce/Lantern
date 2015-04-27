@@ -16,7 +16,12 @@ extern ZBTxRequest msgToPole6;
 extern ZBTxRequest msgToPole7;
 extern ZBTxRequest msgToPole8;
 
+XBeeAddress64 pole9address = XBeeAddress64(0x0013a200, 0x409140b1); 
+
+uint8_t buttonPressed[3] = {13, 1, 255};
+
 int frameCount = 0;
+int pushButtonState = 0;
 
 void setup() {
   //setup logging
@@ -32,13 +37,28 @@ void setup() {
 void loop() {    
   // read messages
   readXbee();
+
+  if (readSensors() == 1) {
+    if (pushButtonState == 0) {
+      pushButtonState = 1;
+      Serial.println("button pressed.");
+
+    } 
+  } else if (readSensors() == 0) {
+    if (pushButtonState == 1) {
+      pushButtonState = 0;
+      Serial.println("button released.");
+
+    }
+  }
+
   //readXbeeStatus();
 
   frameCount += 1;
   if (frameCount > 100) {
     frameCount = 0;
     Serial.println("Sending Broadcast Message");
-    sendXbee(msgToBroadcast);
+    sendXbee(pole9address, buttonPressed);
 
   }
   
