@@ -14,7 +14,7 @@ class XbeePole:
 class XbeePoleControl:
 	def __init__(self):
 		self.long = {
-			0: "\x00\x00\x00\x00\x00\x00\xFF\xFF",
+			0: "\x00\x00\x00\x00\x00\x00\xFF\xFE",
 			1: "\x00\x13\xA2\x00\x40\x8D\x9E\x0E",
 			2: "\x00\x13\xA2\x00\x40\x91\x40\xB6",
 			3: "\x00\x13\xA2\x00\x40\x91\x40\x18",
@@ -62,22 +62,25 @@ class XbeePoleControl:
 	def send(self, destination, message):
 		if len(self.short[destination]) == 0:
 			print 'first send to pole ' + str(destination) + '.'
-			self.xbee.send("tx", data="\xff", dest_addr_long=self.long[destination], dest_addr="\xff\xfe")
+			self.xbee.send("tx", data=message, dest_addr_long=self.long[destination], dest_addr="\xff\xfe")
 			response = self.xbee.wait_read_frame()
 
-			# print response
 			self.short[destination] = response["dest_addr"]
 
 		else:
 			print 'second send to pole ' + str(destination) + '.'
 			self.xbee.send("tx", data=message, dest_addr_long=self.long[destination], dest_addr=self.short[destination])
 			response = self.xbee.wait_read_frame()
-			# print response
+			
 		
 		if response['discover_status'] == '\x01':
 			print 'communication not received by pole ' + str(destination) + '.' # False / failed
+		
 		elif response['discover_status'] == '\x00':
 			print 'commuincation received by pole ' + str(destination) + '.' # True / success
+
+		print response
+
 
 	def read(self):
 		response = self.xbee.wait_read_frame()

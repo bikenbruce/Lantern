@@ -2,7 +2,7 @@ XBee xbee = XBee();
 
 // xbee addresses
 XBeeAddress64 broadcast = XBeeAddress64(0x00000000, 0x0000ffff);
-XBeeAddress64 coordinatorSD  = XBeeAddress64(0x0013a200, 0x407054ac);  // coordinator @ steve's house
+XBeeAddress64 coordinatorSD = XBeeAddress64(0x0013a200, 0x407054ac);  // coordinator @ steve's house
 XBeeAddress64 coordinatorSJ = XBeeAddress64(0x0013a200, 0x408CDB42);  // coordinator @ SJSU
 XBeeAddress64 pole1address = XBeeAddress64(0x0013a200, 0x408d9e0e);  // pole 1
 XBeeAddress64 pole2address = XBeeAddress64(0x0013a200, 0x409140b6);  // pole 2
@@ -15,11 +15,11 @@ XBeeAddress64 pole8address = XBeeAddress64(0x0013a200, 0x409140b1);  // pole 8, 
 // XBeeAddress64 pole9address = XBeeAddress64(0x0013a200, 0x409140b1);  // pole 9 (test at SJSU)
 
 // message / string
-//uint8_t buttonPressed[] = {13, 1, 255};
+uint8_t buttonPressed[] = {13, 1, 255};
 
 //address with message
-// extern ZBTxRequest msgToCoordinatorSD = ZBTxRequest(coordinatorSD, buttonPressed, sizeof(buttonPressed));
-// extern ZBTxRequest msgToCoordinatorSJ = ZBTxRequest(coordinatorSJ, buttonPressed, sizeof(buttonPressed));
+//extern ZBTxRequest msgToCoordinatorSD = ZBTxRequest(coordinatorSD, buttonPressed, sizeof(buttonPressed));
+extern ZBTxRequest msgToCoordinatorSJ = ZBTxRequest(coordinatorSJ, buttonPressed, sizeof(buttonPressed));
 // extern ZBTxRequest msgToBroadcast     = ZBTxRequest(broadcast,    buttonPressed, sizeof(buttonPressed));
 // extern ZBTxRequest msgToPole1       = ZBTxRequest(pole1address, buttonPressed, sizeof(buttonPressed));
 // extern ZBTxRequest msgToPole2       = ZBTxRequest(pole2address, buttonPressed, sizeof(buttonPressed));
@@ -39,10 +39,11 @@ void setupXbee() {
   
 }
 
-void sendXbee(XBeeAddress64 *poleAddress, uint8_t *message) {
-  ZBTxRequest msgToPole = ZBTxRequest(*poleAddress, *message, sizeof(*message));
- xbee.send(msgToPole);
- Serial.print("message sent\n"); 
+//void sendXbee(XBeeAddress64 poleAddress, uint8_t message) {
+void sendXbee() {
+ //ZBTxRequest msgToPole = ZBTxRequest(coordinatorSJ, msgToCoordinatorSJ, sizeof(msgToCoordinatorSJ));
+ xbee.send(msgToCoordinatorSJ);
+ Serial.print("message sent\n");
  
  if (xbee.readPacket(500)) {
     // got a response!
@@ -54,11 +55,11 @@ void sendXbee(XBeeAddress64 *poleAddress, uint8_t *message) {
       // get the delivery status, the fifth byte
       if (txStatus.getDeliveryStatus() == SUCCESS) {
         // success.  time to celebrate
-        Serial.print("confirmation received\n");
+        Serial.println("confirmation received.");
         
       } else {
         // the remote XBee did not receive our packet. is it powered on?
-        Serial.println("confirmation not received");
+        Serial.println("confirmation not received.");
         
       }
     }
@@ -69,13 +70,14 @@ int readXbee() {
   xbee.readPacket();
   
   if (xbee.getResponse().isAvailable()) {
+    Serial.println("message available.");
     
     if (xbee.getResponse().getApiId() == ZB_RX_RESPONSE) {
       
       // fill out zb rx class
       xbee.getResponse().getZBRxResponse(rx);
       
-      Serial.print("message received\n");
+      Serial.println("message received.");
 
       // Serial.print("length: ");
       // Serial.println(rx.getDataLength());

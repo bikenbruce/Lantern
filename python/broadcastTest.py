@@ -1,13 +1,8 @@
 from Lantern import XbeePoleControl
-from time import sleep
-from numpy import random
-
-# sleep(0.50)
 
 control = XbeePoleControl()
 control.open()
 
-control.send(0, "\xFF")
+control.send(0, "\x0D\x00\xFF")
 
 control.close()
-
