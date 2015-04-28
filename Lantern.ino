@@ -15,6 +15,7 @@ extern ZBTxRequest msgToPole5;
 extern ZBTxRequest msgToPole6;
 extern ZBTxRequest msgToPole7;
 extern ZBTxRequest msgToPole8;
+extern ZBTxRequest msgToPole9;
 
 int frameCount = 0;
 int pushButtonState = 0;
@@ -48,14 +49,12 @@ void loop() {
   //   }
   // }
 
-  //frameCount += 1;
-  //if (frameCount > 100) {
-    //frameCount = 0;
-    //Serial.println("Sending Broadcast Message");
-    //sendXbee();
-    // sendXbee(pole9address, buttonPressed);
+  frameCount += 1;
+  if (frameCount > 200) {
+    frameCount = 0;
+    sendXbee();
 
-  //}
+  }
   
-  //delay(50);
+  delay(50);
 }

@@ -3,10 +3,7 @@ from xbee import ZigBee
 import time
 
 # SJSU Controller
-# PORT='/dev/tty.usbserial-A600eIdg'
-
-# Steve's Controller
-PORT='/dev/tty.usbserial-A600eIcJ'
+PORT='/dev/tty.usbserial-A600eIdg'
 BAUD_RATE = 115200
 
 ser = serial.Serial(PORT, BAUD_RATE)
@@ -21,12 +18,12 @@ POLE6 = "\x00\x13\xA2\x00"
 POLE7 = "\x00\x13\xA2\x00"
 POLE8 = "\x00\x13\xA2\x00"
 
-xbee.send("tx",data="\xff", dest_addr_long=POLE3, dest_addr="\xff\xfe")
+xbee.send("tx",data="\xff", dest_addr_long=POLE4, dest_addr="\xff\xfe")
 response = xbee.wait_read_frame()
 shot_addr = response["dest_addr"]
 print response
 
-xbee.send("tx",data="\x1f", dest_addr_long=POLE3, dest_addr=shot_addr)
+xbee.send("tx",data="\x1f", dest_addr_long=POLE4, dest_addr=shot_addr)
 response = xbee.wait_read_frame()
 print response
 

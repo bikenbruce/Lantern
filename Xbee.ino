@@ -2,6 +2,7 @@ XBee xbee = XBee();
 
 // xbee addresses
 XBeeAddress64 broadcast = XBeeAddress64(0x00000000, 0x0000ffff);
+
 XBeeAddress64 coordinatorSD = XBeeAddress64(0x0013a200, 0x407054ac);  // coordinator @ steve's house
 XBeeAddress64 coordinatorSJ = XBeeAddress64(0x0013a200, 0x408CDB42);  // coordinator @ SJSU
 XBeeAddress64 pole1address = XBeeAddress64(0x0013a200, 0x408d9e0e);  // pole 1
@@ -12,23 +13,24 @@ XBeeAddress64 pole5address = XBeeAddress64(0x0013a200, 0x409140b1);  // pole 5
 XBeeAddress64 pole6address = XBeeAddress64(0x0013a200, 0x409140b1);  // pole 6, unknown
 XBeeAddress64 pole7address = XBeeAddress64(0x0013a200, 0x409140b1);  // pole 7, unknown
 XBeeAddress64 pole8address = XBeeAddress64(0x0013a200, 0x409140b1);  // pole 8, unknown
-// XBeeAddress64 pole9address = XBeeAddress64(0x0013a200, 0x409140b1);  // pole 9 (test at SJSU)
+XBeeAddress64 pole9address = XBeeAddress64(0x0013a200, 0x408cdb45);  // pole 9 (test at SJSU)
 
 // message / string
 uint8_t buttonPressed[] = {13, 1, 255};
 
 //address with message
-//extern ZBTxRequest msgToCoordinatorSD = ZBTxRequest(coordinatorSD, buttonPressed, sizeof(buttonPressed));
+extern ZBTxRequest msgToBroadcast     = ZBTxRequest(broadcast,    buttonPressed, sizeof(buttonPressed));
+extern ZBTxRequest msgToCoordinatorSD = ZBTxRequest(coordinatorSD, buttonPressed, sizeof(buttonPressed));
 extern ZBTxRequest msgToCoordinatorSJ = ZBTxRequest(coordinatorSJ, buttonPressed, sizeof(buttonPressed));
-// extern ZBTxRequest msgToBroadcast     = ZBTxRequest(broadcast,    buttonPressed, sizeof(buttonPressed));
-// extern ZBTxRequest msgToPole1       = ZBTxRequest(pole1address, buttonPressed, sizeof(buttonPressed));
-// extern ZBTxRequest msgToPole2       = ZBTxRequest(pole2address, buttonPressed, sizeof(buttonPressed));
-// extern ZBTxRequest msgToPole3       = ZBTxRequest(pole3address, buttonPressed, sizeof(buttonPressed));
-// extern ZBTxRequest msgToPole4       = ZBTxRequest(pole4address, buttonPressed, sizeof(buttonPressed));
-// extern ZBTxRequest msgToPole5       = ZBTxRequest(pole5address, buttonPressed, sizeof(buttonPressed));
-// extern ZBTxRequest msgToPole6       = ZBTxRequest(pole6address, buttonPressed, sizeof(buttonPressed));
-// extern ZBTxRequest msgToPole7       = ZBTxRequest(pole7address, buttonPressed, sizeof(buttonPressed));
-// extern ZBTxRequest msgToPole8       = ZBTxRequest(pole8address, buttonPressed, sizeof(buttonPressed));
+extern ZBTxRequest msgToPole1       = ZBTxRequest(pole1address, buttonPressed, sizeof(buttonPressed));
+extern ZBTxRequest msgToPole2       = ZBTxRequest(pole2address, buttonPressed, sizeof(buttonPressed));
+extern ZBTxRequest msgToPole3       = ZBTxRequest(pole3address, buttonPressed, sizeof(buttonPressed));
+extern ZBTxRequest msgToPole4       = ZBTxRequest(pole4address, buttonPressed, sizeof(buttonPressed));
+extern ZBTxRequest msgToPole5       = ZBTxRequest(pole5address, buttonPressed, sizeof(buttonPressed));
+extern ZBTxRequest msgToPole6       = ZBTxRequest(pole6address, buttonPressed, sizeof(buttonPressed));
+extern ZBTxRequest msgToPole7       = ZBTxRequest(pole7address, buttonPressed, sizeof(buttonPressed));
+extern ZBTxRequest msgToPole8       = ZBTxRequest(pole8address, buttonPressed, sizeof(buttonPressed));
+extern ZBTxRequest msgToPole9       = ZBTxRequest(pole9address, buttonPressed, sizeof(buttonPressed));
 
 ZBTxStatusResponse txStatus = ZBTxStatusResponse();
 ZBRxResponse rx = ZBRxResponse();
@@ -36,7 +38,7 @@ ZBRxResponse rx = ZBRxResponse();
 void setupXbee() {
   Serial3.begin(115200);
   xbee.setSerial(Serial3);
-  
+
 }
 
 //void sendXbee(XBeeAddress64 poleAddress, uint8_t message) {
@@ -79,8 +81,8 @@ int readXbee() {
       
       Serial.println("message received.");
 
-      // Serial.print("length: ");
-      // Serial.println(rx.getDataLength());
+      Serial.print("length: ");
+      Serial.println(rx.getDataLength());
 
       switch (rx.getData(0)) {
         case 0:

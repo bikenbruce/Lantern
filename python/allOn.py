@@ -24,8 +24,10 @@ POLE8 = "\x00\x13\xA2\x00"
 xbee.send("tx",data="\xff", dest_addr_long=POLE3, dest_addr="\xff\xfe")
 response = xbee.wait_read_frame()
 shot_addr = response["dest_addr"]
+print response
 
 xbee.send("tx",data="\x20", dest_addr_long=POLE3, dest_addr=shot_addr)
 response = xbee.wait_read_frame()
-    
+print response
+
 ser.close()

@@ -65,26 +65,29 @@ class XbeePoleControl:
 			self.xbee.send("tx", data=message, dest_addr_long=self.long[destination], dest_addr="\xff\xfe")
 			response = self.xbee.wait_read_frame()
 
-			self.short[destination] = response["dest_addr"]
-
 		else:
 			print 'second send to pole ' + str(destination) + '.'
 			self.xbee.send("tx", data=message, dest_addr_long=self.long[destination], dest_addr=self.short[destination])
-			response = self.xbee.wait_read_frame()
 			
-		
-		if response['discover_status'] == '\x01':
-			print 'communication not received by pole ' + str(destination) + '.' # False / failed
-		
-		elif response['discover_status'] == '\x00':
-			print 'commuincation received by pole ' + str(destination) + '.' # True / success
-
+		response = self.xbee.wait_read_frame()
 		print response
+		
+		if response['id'] == 'tx_status' and len(self.short[destination]) == 0:
+			self.short[destination] = response["dest_addr"]
+
+		if response['id'] == 'tx_status':
+			if response['discover_status'] == '\x01':
+				print 'communication not received by pole ' + str(destination) + '.' # False / failed
+		
+			elif response['discover_status'] == '\x00':
+				print 'commuincation received by pole ' + str(destination) + '.' # True / success
+
+		elif response['id'] == 'rx':
+			print 'data received.'
 
 
 	def read(self):
-		response = self.xbee.wait_read_frame()
-		print response
+		print dir(xbee)
 
 
 # Broadcast event received by python example:
