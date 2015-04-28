@@ -11,26 +11,26 @@ try:
 	while True:
 		print '\n'
 		sleep_time = random.uniform(0.3, 0.9)
-		print 'sleeping for ' + str(sleep_time)
+		# print 'sleeping for ' + str(sleep_time)
 		sleep(sleep_time)
-		control.send(4, "\x0D\x00\xFF")
+		control.send(9, "\x0D\x01\xFF")
 
 		sleep_time = random.uniform(0.2, 0.9)
-		print 'sleeping for ' + str(sleep_time)
+		# print 'sleeping for ' + str(sleep_time)
 		sleep(sleep_time)
-		control.send(4, "\x0D\x00\xFF")
+		control.send(9, "\x0D\x01\xFF")
 
 		sleep_time = random.uniform(0.3, 0.9)
-		print 'sleeping for ' + str(sleep_time)
+		# print 'sleeping for ' + str(sleep_time)
 		sleep(sleep_time)
-		control.send(4, "\x0D\x00\xFF")
+		control.send(9, "\x0D\x01\xFF")
 
 		sleep_time = random.uniform(0.2, 0.9)
-		print 'sleeping for ' + str(sleep_time)
+		# print 'sleeping for ' + str(sleep_time)
 		sleep(sleep_time)
-		control.send(4, "\x0D\x00\xFF")
+		control.send(9, "\x0D\x01\xFF")
 
-		sleep_time = random.uniform(10.2, 12.5)
+		sleep_time = random.uniform(4.2, 8.5)
 		print '\nsleeping for ' + str(sleep_time)
 		sleep(sleep_time)
 except KeyboardInterrupt:

@@ -61,16 +61,18 @@ class XbeePoleControl:
 
 	def send(self, destination, message):
 		if len(self.short[destination]) == 0:
-			print 'first send to pole ' + str(destination) + '.'
+			print 'first message to pole ' + str(destination) + '.'
 			self.xbee.send("tx", data=message, dest_addr_long=self.long[destination], dest_addr="\xff\xfe")
-			response = self.xbee.wait_read_frame()
 
 		else:
-			print 'second send to pole ' + str(destination) + '.'
+			print 'second message to pole ' + str(destination) + '.'
 			self.xbee.send("tx", data=message, dest_addr_long=self.long[destination], dest_addr=self.short[destination])
 			
 		response = self.xbee.wait_read_frame()
-		print response
+		# print response
+
+		if response['id'] == 'rx':
+		 	print 'rx packet received.'
 		
 		if response['id'] == 'tx_status' and len(self.short[destination]) == 0:
 			self.short[destination] = response["dest_addr"]
@@ -82,12 +84,11 @@ class XbeePoleControl:
 			elif response['discover_status'] == '\x00':
 				print 'commuincation received by pole ' + str(destination) + '.' # True / success
 
-		elif response['id'] == 'rx':
-			print 'data received.'
 
 
 	def read(self):
-		print dir(xbee)
+		response = self.xbee.wait_read_frame()
+		print response
 
 
 # Broadcast event received by python example:

@@ -49,12 +49,12 @@ void loop() {
   //   }
   // }
 
-  frameCount += 1;
-  if (frameCount > 200) {
-    frameCount = 0;
-    sendXbee();
+  // frameCount += 1;
+  // if (frameCount > 200) {
+  //   frameCount = 0;
+  //   //sendXbee();
 
-  }
+  // }
   
-  delay(50);
+  //delay(50);
 }
