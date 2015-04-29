@@ -70,9 +70,8 @@ void sendXbee() {
 
 int readXbee() {
   xbee.readPacket();
-  
+
   if (xbee.getResponse().isAvailable()) {
-    Serial.println("message available.");
     
     if (xbee.getResponse().getApiId() == ZB_RX_RESPONSE) {
       

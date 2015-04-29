@@ -27,7 +27,7 @@ void setup() {
   
   setupDMX();
   setupXbee();
-  setupSensors();
+  //setupSensors();
   
 }
 
@@ -56,5 +56,5 @@ void loop() {
 
   // }
   
-  //delay(50);
+  delay(50);
 }

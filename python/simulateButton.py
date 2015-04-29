@@ -13,22 +13,22 @@ try:
 		sleep_time = random.uniform(0.3, 0.9)
 		# print 'sleeping for ' + str(sleep_time)
 		sleep(sleep_time)
-		control.send(9, "\x0D\x01\xFF")
+		control.send(4, "\x0D\x01\xFF")
 
 		sleep_time = random.uniform(0.2, 0.9)
 		# print 'sleeping for ' + str(sleep_time)
 		sleep(sleep_time)
-		control.send(9, "\x0D\x01\xFF")
+		control.send(4, "\x0D\x01\xFF")
 
 		sleep_time = random.uniform(0.3, 0.9)
 		# print 'sleeping for ' + str(sleep_time)
 		sleep(sleep_time)
-		control.send(9, "\x0D\x01\xFF")
+		control.send(4, "\x0D\x01\xFF")
 
 		sleep_time = random.uniform(0.2, 0.9)
 		# print 'sleeping for ' + str(sleep_time)
 		sleep(sleep_time)
-		control.send(9, "\x0D\x01\xFF")
+		control.send(4, "\x0D\x01\xFF")
 
 		sleep_time = random.uniform(4.2, 8.5)
 		print '\nsleeping for ' + str(sleep_time)
