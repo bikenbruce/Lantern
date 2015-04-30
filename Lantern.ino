@@ -27,7 +27,7 @@ void setup() {
   
   setupDMX();
   setupXbee();
-  //setupSensors();
+  setupSensors();
   
 }
 
