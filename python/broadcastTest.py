@@ -1,4 +1,5 @@
 from Lantern import XbeePoleControl
+from time import sleep
 
 control = XbeePoleControl()
 control.open()
