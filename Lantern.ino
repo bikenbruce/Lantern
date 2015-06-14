@@ -3,6 +3,21 @@
 #include <SPI.h>
 #include <SoftwareSerial.h>
 
+#include <TaskScheduler.h>
+
+#include <Adafruit_NeoPixel.h>
+#include <avr/power.h>
+
+// struct RGB {
+//   byte r;
+//   byte g;
+//   byte b;
+// };
+
+// RGB red   = {255, 0, 0};
+// RGB green = {0, 255, 0};
+// RGB blue  = {0, 0, 255};
+
 // Xbee messages
 extern ZBTxRequest msgToBroadcast;
 extern ZBTxRequest msgToCoordinatorSJ;
@@ -17,8 +32,28 @@ extern ZBTxRequest msgToPole7;
 extern ZBTxRequest msgToPole8;
 extern ZBTxRequest msgToPole9;
 
-int frameCount = 0;
 int pushButtonState = 0;
+
+Task t1(50, -1, &t1Callback);
+Task t2(20, -1, &t2Callback);
+
+Scheduler runner;
+
+void t1Callback() {
+    // Serial.print("t1: ");
+    // Serial.println(millis());
+    SeqUp();
+    DrawAll();
+
+}
+
+void t2Callback() {
+    // Serial.print("t2: ");
+    // Serial.println(millis());
+    SeqDown();
+    DrawAll();
+
+}
 
 void setup() {
   //setup logging
@@ -28,12 +63,33 @@ void setup() {
   setupDMX();
   setupXbee();
   setupSensors();
+  setupPixel();
+
+  t1.enable();
+  Serial.println("Enabled t1");
+  t2.enable();
+  Serial.println("Enabled t2");
+
+  runner.init();
+
+  runner.addTask(t1);
+  Serial.println("added t1");
+  runner.addTask(t2);
+  Serial.println("added t2");
+
+  SeqOff();
+  SeqOn();
+  delay(1000);
+  SeqOff();
   
 }
 
 void loop() {    
   // read messages
-  readXbee();
+  //readXbee();
+  //readPixel();
+
+  runner.execute();
 
   // if (readSensors() == 1) {
   //   if (pushButtonState == 0) {

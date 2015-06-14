@@ -3,6 +3,7 @@
 
 void setupDMX() {
   // dmx board setup
+  // ToDo: This might be channel 2 or 3.  
   DmxSimple.usePin(2);
   DmxSimple.maxChannel(40);
   
