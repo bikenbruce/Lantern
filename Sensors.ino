@@ -14,7 +14,7 @@ int bin_0 = 400; //Binary 0 threshold (Microseconds)
 boolean ledtoggle = HIGH;
 
 //analogs ins
-int knockApin = 12; int inTempApin =13; int exTempApin =14; int sonicApin = 15;
+int knockApin = 12; int inTempApin = 13; int exTempApin = 14; int sonicApin = 15;
 
 int dArrRaw[] = {0,0,0};
 //items are btn, pir1, pir2
