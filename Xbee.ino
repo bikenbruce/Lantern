@@ -157,6 +157,11 @@ int readXbee() {
           Serial.println(rx.getData(2));
           break;
 
+        case 14:
+          Serial.print("event 15 received from pople ");
+          Serial.print(rx.getData(1));
+          break;
+
         case 30:
           // Set a Board, R/G/B, Value
           Serial.print("Set Board: ");

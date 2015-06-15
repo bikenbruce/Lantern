@@ -16,6 +16,11 @@ const int buttonPin = 24;     // the number of the pushbutton pin
 const int ledPin = 13;      // the number of the LED pin
 
 int buttonState = 0;         // variable for reading the pushbutton status
+bool prevButtonState = false;
+
+int r = 0;
+int g = 0;
+int b = 0;
 
 
 void setupPixel() {
@@ -27,7 +32,8 @@ void setupPixel() {
   pixels.begin(); // This initializes the NeoPixel library.
 }
 
-void readPixel(){
+
+void readPixel() {
   // read the state of the pushbutton value:
   buttonState = digitalRead(buttonPin);
 
@@ -35,15 +41,18 @@ void readPixel(){
   // if it is, the buttonState is HIGH:
   if (buttonState == HIGH) {     
     // turn LED on:    
-    digitalWrite(ledPin, HIGH);  
-    SeqOn();
+    digitalWrite(ledPin, HIGH);
+    if (prevButtonState == false) {
+      prevButtonState = true;
+      Serial.println("button on.");
+
+    }
   } 
   else {
     // turn LED off:
-    digitalWrite(ledPin, LOW); 
-    SeqOff();
+    digitalWrite(ledPin, LOW);
+    prevButtonState = false;
   }
- 
 }
 
 void pixelRender() {
@@ -61,7 +70,7 @@ int rate_change = 1;
 
 void SeqUp() {
   for(int i = 0; i < NUMPIXELS; i++) {
-    if (SeqUpValue[SeqUpLevel] < 80) {
+    if (SeqUpValue[SeqUpLevel] < 50) {
       SeqUpValue[SeqUpLevel] += rate_change;
 
     } else {
@@ -77,7 +86,7 @@ void SeqUp() {
 
 void SeqDown() {
   for(int i = 0; i < NUMPIXELS; i++) {
-    if (SeqDownValue[SeqDownLevel] < 80) {
+    if (SeqDownValue[SeqDownLevel] < 50) {
       SeqDownValue[SeqDownLevel] += rate_change;
 
     } else {
@@ -90,10 +99,6 @@ void SeqDown() {
     }
   }
 }
-
-int r = 0;
-int g = 0;
-int b = 0;
 
 void DrawAll() {
   for(int i = 0; i < NUMPIXELS; i++) {

@@ -32,10 +32,9 @@ extern ZBTxRequest msgToPole7;
 extern ZBTxRequest msgToPole8;
 extern ZBTxRequest msgToPole9;
 
-int pushButtonState = 0;
-
-Task t1(50, -1, &t1Callback);
-Task t2(20, -1, &t2Callback);
+Task t1(70, -1, &t1Callback);
+Task t2(30, -1, &t2Callback);
+Task t3(5, -1, &t3Callback);
 
 Scheduler runner;
 
@@ -55,6 +54,12 @@ void t2Callback() {
 
 }
 
+void t3Callback() {
+  readPixel();
+  readXbee();
+
+}
+
 void setup() {
   //setup logging
   Serial.begin(115200);
@@ -69,6 +74,8 @@ void setup() {
   Serial.println("Enabled t1");
   t2.enable();
   Serial.println("Enabled t2");
+  t3.enable();
+  Serial.println("Enabled t3");
 
   runner.init();
 
@@ -76,18 +83,16 @@ void setup() {
   Serial.println("added t1");
   runner.addTask(t2);
   Serial.println("added t2");
+  runner.addTask(t3);
+  Serial.println("added t3");
 
   SeqOff();
   SeqOn();
-  delay(1000);
-  SeqOff();
+  delay(500);
   
 }
 
 void loop() {    
-  // read messages
-  //readXbee();
-  //readPixel();
 
   runner.execute();
 
