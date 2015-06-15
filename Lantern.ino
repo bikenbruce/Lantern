@@ -32,8 +32,8 @@ extern ZBTxRequest msgToPole7;
 extern ZBTxRequest msgToPole8;
 extern ZBTxRequest msgToPole9;
 
-Task t1(70, -1, &t1Callback);
-Task t2(30, -1, &t2Callback);
+Task t1(90, -1, &t1Callback);
+Task t2(80, -1, &t2Callback);
 Task t3(5, -1, &t3Callback);
 
 Scheduler runner;

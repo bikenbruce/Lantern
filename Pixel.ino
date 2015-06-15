@@ -18,9 +18,17 @@ const int ledPin = 13;      // the number of the LED pin
 int buttonState = 0;         // variable for reading the pushbutton status
 bool prevButtonState = false;
 
-int r = 0;
-int g = 0;
-int b = 0;
+int SeqUpLevel = 0;
+int SeqUpValue = 0;
+
+int SeqDownLevel = 7;
+int SeqDownValue = 0;
+
+int rate_change = 1;
+
+int r[8];
+int g[8];
+int b[8];
 
 
 void setupPixel() {
@@ -45,68 +53,58 @@ void readPixel() {
     if (prevButtonState == false) {
       prevButtonState = true;
       Serial.println("button on.");
-
     }
-  } 
-  else {
+  } else {
     // turn LED off:
     digitalWrite(ledPin, LOW);
-    prevButtonState = false;
+    if (prevButtonState == true) {
+      Serial.println("button off.");
+      prevButtonState = false;
+    }
   }
 }
 
-void pixelRender() {
-  pixels.setPixelColor(0, pixels.Color(0,10,0)); // Moderately bright green color.
-  pixels.show(); // This sends the updated pixel color to the hardware.
-}
-
-int SeqUpLevel = 0;
-int SeqUpValue[8];
-
-int SeqDownLevel = 7;
-int SeqDownValue[8];
-
-int rate_change = 1;
 
 void SeqUp() {
-  for(int i = 0; i < NUMPIXELS; i++) {
-    if (SeqUpValue[SeqUpLevel] < 50) {
-      SeqUpValue[SeqUpLevel] += rate_change;
+  SeqUpValue += rate_change;
 
-    } else {
-      SeqUpValue[SeqUpLevel] = 0;
-      SeqUpLevel += 1;
-    }
+  if (SeqUpValue > 10) {
+    // Resets the current lit LED to 0
+    r[SeqUpLevel] = 0;
+    // Reset the briightness to 0
+    SeqUpValue = 0;
+    // Jump to the next LED
+    SeqUpLevel += 1;
+  }
 
-    if (SeqUpLevel > 7) {
-      SeqUpLevel = 0;
-    }
+  if (SeqUpLevel > 7) {
+    SeqUpLevel = 0;
   }
 }
 
 void SeqDown() {
-  for(int i = 0; i < NUMPIXELS; i++) {
-    if (SeqDownValue[SeqDownLevel] < 50) {
-      SeqDownValue[SeqDownLevel] += rate_change;
+  SeqDownValue += rate_change;
 
-    } else {
-       SeqDownValue[SeqDownLevel] = 0;
-       SeqDownLevel -= 1;
-    }
+  if (SeqDownValue > 10) {
+    // Set the current LED to 0
+    g[SeqDownLevel] = 0;
+    // Reset the brightness to 0
+    SeqDownValue = 0;
+    //Jump to the next LED
+    SeqDownLevel -= 1;
+  }
 
-    if (SeqDownLevel < 0) {
-       SeqDownLevel = 7;
-    }
+  if (SeqDownLevel < 0) {
+    SeqDownLevel = 7;
   }
 }
 
 void DrawAll() {
-  for(int i = 0; i < NUMPIXELS; i++) {
-    r = SeqUpValue[i];
-    g = SeqDownValue[i];
-    b = 0;
+  r[SeqUpLevel] = SeqUpValue;
+  g[SeqDownLevel] = SeqDownValue;
 
-    pixels.setPixelColor(i, pixels.Color(r,g,b));
+  for(int i = 0; i < NUMPIXELS; i++) {
+    pixels.setPixelColor(i, pixels.Color(r[i], g[i], b[i]));
   }
 
   pixels.show();
