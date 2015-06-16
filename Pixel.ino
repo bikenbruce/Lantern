@@ -24,7 +24,8 @@ int SeqUpValue = 0;
 int SeqDownLevel = 7;
 int SeqDownValue = 0;
 
-int rate_change = 1;
+extern int rRateChange = 1;
+extern int gRateChange = 1;
 
 int r[8];
 int g[8];
@@ -53,6 +54,7 @@ void readPixel() {
     if (prevButtonState == false) {
       prevButtonState = true;
       Serial.println("button on.");
+      rRateChange = 1;
     }
   } else {
     // turn LED off:
@@ -66,7 +68,7 @@ void readPixel() {
 
 
 void SeqUp() {
-  SeqUpValue += rate_change;
+  SeqUpValue += rRateChange;
 
   if (SeqUpValue > 10) {
     // Resets the current lit LED to 0
@@ -79,11 +81,12 @@ void SeqUp() {
 
   if (SeqUpLevel > 7) {
     SeqUpLevel = 0;
+    rRateChange = 0;
   }
 }
 
 void SeqDown() {
-  SeqDownValue += rate_change;
+  SeqDownValue += gRateChange;
 
   if (SeqDownValue > 10) {
     // Set the current LED to 0
@@ -96,6 +99,7 @@ void SeqDown() {
 
   if (SeqDownLevel < 0) {
     SeqDownLevel = 7;
+    gRateChange = 0;
   }
 }
 

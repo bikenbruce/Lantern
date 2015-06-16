@@ -72,6 +72,7 @@ int readXbee() {
   xbee.readPacket();
 
   if (xbee.getResponse().isAvailable()) {
+    Serial.println("message available.");
     
     if (xbee.getResponse().getApiId() == ZB_RX_RESPONSE) {
       
@@ -155,6 +156,8 @@ int readXbee() {
           Serial.print(rx.getData(1));
           Serial.print(" with velocity of ");
           Serial.println(rx.getData(2));
+
+          gRateChange = 1;
           break;
 
         case 14:
