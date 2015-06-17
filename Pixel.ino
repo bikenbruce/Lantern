@@ -80,6 +80,7 @@ void SeqUp() {
   }
 
   if (SeqUpLevel > 7) {
+    // Sequence has reached the top.
     SeqUpLevel = 0;
     rRateChange = 0;
   }
@@ -98,6 +99,7 @@ void SeqDown() {
   }
 
   if (SeqDownLevel < 0) {
+    // Sequence has reahed the bottom.
     SeqDownLevel = 7;
     gRateChange = 0;
   }

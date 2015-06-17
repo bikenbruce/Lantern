@@ -8,6 +8,8 @@
 #include <Adafruit_NeoPixel.h>
 #include <avr/power.h>
 
+#include <EEPROM.h>
+
 // struct RGB {
 //   byte r;
 //   byte g;
@@ -19,18 +21,18 @@
 // RGB blue  = {0, 0, 255};
 
 // Xbee messages
-extern ZBTxRequest msgToBroadcast;
-extern ZBTxRequest msgToCoordinatorSJ;
-extern ZBTxRequest msgToCoordinatorSD;
-extern ZBTxRequest msgToPole1;
-extern ZBTxRequest msgToPole2;
-extern ZBTxRequest msgToPole3;
-extern ZBTxRequest msgToPole4;
-extern ZBTxRequest msgToPole5;
-extern ZBTxRequest msgToPole6;
-extern ZBTxRequest msgToPole7;
-extern ZBTxRequest msgToPole8;
-extern ZBTxRequest msgToPole9;
+// extern ZBTxRequest msgToBroadcast;
+// extern ZBTxRequest msgToCoordinatorSJ;
+// extern ZBTxRequest msgToCoordinatorSD;
+// extern ZBTxRequest msgToPole1;
+// extern ZBTxRequest msgToPole2;
+// extern ZBTxRequest msgToPole3;
+// extern ZBTxRequest msgToPole4;
+// extern ZBTxRequest msgToPole5;
+// extern ZBTxRequest msgToPole6;
+// extern ZBTxRequest msgToPole7;
+// extern ZBTxRequest msgToPole8;
+// extern ZBTxRequest msgToPole9;
 
 Task t1(20, -1, &t1Callback);
 Task t2(20, -1, &t2Callback);
@@ -60,10 +62,14 @@ void t3Callback() {
 
 }
 
+int pole;
+
 void setup() {
   //setup logging
   Serial.begin(115200);
   Serial.println("SETUP Start");
+
+  pole = EEPROM.read(0);
   
   setupDMX();
   setupXbee();
@@ -92,7 +98,12 @@ void setup() {
   
 }
 
-void loop() {    
+void loop() {
+  if (pole == 8) {
+    Serial.println("yes, pole 8.");
+  } else {
+    Serial.println("No, not pole 8.");
+  }
 
   runner.execute();
 
