@@ -10,6 +10,8 @@
 
 #include <EEPROM.h>
 
+int POLE;
+
 // struct RGB {
 //   byte r;
 //   byte g;
@@ -19,20 +21,6 @@
 // RGB red   = {255, 0, 0};
 // RGB green = {0, 255, 0};
 // RGB blue  = {0, 0, 255};
-
-// Xbee messages
-// extern ZBTxRequest msgToBroadcast;
-// extern ZBTxRequest msgToCoordinatorSJ;
-// extern ZBTxRequest msgToCoordinatorSD;
-// extern ZBTxRequest msgToPole1;
-// extern ZBTxRequest msgToPole2;
-// extern ZBTxRequest msgToPole3;
-// extern ZBTxRequest msgToPole4;
-// extern ZBTxRequest msgToPole5;
-// extern ZBTxRequest msgToPole6;
-// extern ZBTxRequest msgToPole7;
-// extern ZBTxRequest msgToPole8;
-// extern ZBTxRequest msgToPole9;
 
 Task t1(20, -1, &t1Callback);
 Task t2(20, -1, &t2Callback);
@@ -61,8 +49,6 @@ void t3Callback() {
   readXbee();
 
 }
-
-int POLE;
 
 void setup() {
   //setup logging
@@ -99,12 +85,6 @@ void setup() {
 }
 
 void loop() {
-  // if (pole == 8) {
-  //   Serial.println("yes, pole 8.");
-  // } else {
-  //   Serial.println("No, not pole 8.");
-  // }
-
   runner.execute();
 
   // if (readSensors() == 1) {

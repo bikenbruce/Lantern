@@ -86,7 +86,7 @@ void SeqUp() {
 
     for (int i = 6; i < 9; i++) {
       if (i != POLE) {
-        sendXbee(i);
+        sendXbeePushButtonEvent(i, 255);
       }
     }
   }
@@ -115,6 +115,14 @@ void DrawAll() {
   r[SeqUpLevel] = SeqUpValue;
   g[SeqDownLevel] = SeqDownValue;
 
+  for(int i = 0; i < NUMPIXELS; i++) {
+    pixels.setPixelColor(i, pixels.Color(r[i], g[i], b[i]));
+  }
+
+  pixels.show();
+}
+
+void DrawArray(int colorArray) {
   for(int i = 0; i < NUMPIXELS; i++) {
     pixels.setPixelColor(i, pixels.Color(r[i], g[i], b[i]));
   }

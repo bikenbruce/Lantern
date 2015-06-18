@@ -1,40 +1,6 @@
 XBee xbee = XBee();
 
-// xbee addresses
-// XBeeAddress64 broadcast = XBeeAddress64(0x00000000, 0x0000ffff);
-
-// XBeeAddress64 coordinatorSD = XBeeAddress64(0x0013a200, 0x407054ac);  // coordinator @ steve's house
-// XBeeAddress64 coordinatorSJ = XBeeAddress64(0x0013a200, 0x408CDB42);  // coordinator @ SJSU
-// XBeeAddress64 pole1address = XBeeAddress64(0x0013a200, 0x408d9e0e);  // pole 1
-// XBeeAddress64 pole2address = XBeeAddress64(0x0013a200, 0x409140b6);  // pole 2
-// XBeeAddress64 pole3address = XBeeAddress64(0x0013a200, 0x40914018);  // pole 3
-// XBeeAddress64 pole4address = XBeeAddress64(0x0013a200, 0x408d9e5f);  // pole 4
-// XBeeAddress64 pole5address = XBeeAddress64(0x0013a200, 0x40c91adf);  // pole 5
-// XBeeAddress64 pole6address = XBeeAddress64(0x0013a200, 0x40d61a48);  // pole 6
-// XBeeAddress64 pole7address = XBeeAddress64(0x0013a200, 0x40c91ae4);  // pole 7
-// XBeeAddress64 pole8address = XBeeAddress64(0x0013a200, 0x40c5f951);  // pole 8
-// XBeeAddress64 pole9address = XBeeAddress64(0x0013a200, 0x408cdb45);  // pole 9 (test at SJSU)
-
 XBeeAddress64 poleAddress[12];
-
-// message / string
-uint8_t buttonPressed[] = {13, 1, 255};
-
-ZBTxRequest msgToPole;
-
-//address with message
-// extern ZBTxRequest msgToBroadcast     = ZBTxRequest(broadcast,    buttonPressed, sizeof(buttonPressed));
-// extern ZBTxRequest msgToCoordinatorSD = ZBTxRequest(coordinatorSD, buttonPressed, sizeof(buttonPressed));
-// ZBTxRequest msgToCoordinatorSJ = ZBTxRequest(coordinatorSJ, buttonPressed, sizeof(buttonPressed));
-// msgToPole[1]       = ZBTxRequest(pole1address, buttonPressed, sizeof(buttonPressed));
-// msgToPole[2]       = ZBTxRequest(pole2address, buttonPressed, sizeof(buttonPressed));
-// msgToPole[3]       = ZBTxRequest(pole3address, buttonPressed, sizeof(buttonPressed));
-// msgToPole[4]       = ZBTxRequest(pole4address, buttonPressed, sizeof(buttonPressed));
-// msgToPole[5]       = ZBTxRequest(pole5address, buttonPressed, sizeof(buttonPressed));
-// msgToPole[6]       = ZBTxRequest(pole6address, buttonPressed, sizeof(buttonPressed));
-// msgToPole[7]       = ZBTxRequest(pole7address, buttonPressed, sizeof(buttonPressed));
-// msgToPole[8]       = ZBTxRequest(pole8address, buttonPressed, sizeof(buttonPressed));
-// msgToPole[9]       = ZBTxRequest(pole9address, buttonPressed, sizeof(buttonPressed));
 
 ZBTxStatusResponse txStatus = ZBTxStatusResponse();
 ZBRxResponse rx = ZBRxResponse();
@@ -55,18 +21,21 @@ void setupXbee() {
   poleAddress[9] = XBeeAddress64(0x0013a200, 0x408cdb45);  // pole 9
   poleAddress[10] = XBeeAddress64(0x0013a200, 0x407054ac);  // coordinator @ steve's house
   poleAddress[11] = XBeeAddress64(0x0013a200, 0x408CDB42);  // coordinator @ SJSU
-
-  msgToPole = ZBTxRequest(poleAddress[11], buttonPressed, sizeof(buttonPressed));
+  // XBeeAddress64 pole9address = XBeeAddress64(0x0013a200, 0x408cdb45);  // pole 9 (test at SJSU)
 
 }
 
-//void sendXbee(XBeeAddress64 poleAddress, uint8_t message) {
-void sendXbee(int poleNumber) {
-  msgToPole = ZBTxRequest(poleAddress[poleNumber], buttonPressed, sizeof(buttonPressed));
- //ZBTxRequest msgToPole = ZBTxRequest(coordinatorSJ, msgToCoordinatorSJ, sizeof(msgToCoordinatorSJ));
+void sendXbeePushButtonEvent(int poleDestination, int velocity) {
+  uint8_t buttonPressed[] = {13, POLE, velocity};
+  ZBTxRequest msgToPole = ZBTxRequest(poleAddress[poleDestination], buttonPressed, sizeof(buttonPressed));
+  sendXbee(msgToPole, poleDestination);
+}
+
+void sendXbee(ZBTxRequest msgToPole, int poleDestination) {
  xbee.send(msgToPole);
- Serial.print("message sent to pole ");
- Serial.println(poleNumber);
+ Serial.print("Message sent to pole ");
+ Serial.print(poleDestination);
+ Serial.println(".");
  
  if (xbee.readPacket(500)) {
     // got a response!
@@ -178,12 +147,18 @@ int readXbee() {
           Serial.print(" with velocity of ");
           Serial.println(rx.getData(2));
 
+          // Trigger the green animation downward.
           gRateChange = 1;
           break;
 
         case 14:
-          Serial.print("event 15 received from pople ");
+          Serial.print("event 14 received from pole ");
           Serial.print(rx.getData(1));
+          break;
+
+        case 15:
+          Serial.print("Color Array received from pole ");
+          Serial.println(rx.getData(1));
           break;
 
         case 30:
