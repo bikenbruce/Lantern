@@ -61,10 +61,12 @@ void setupXbee() {
 }
 
 //void sendXbee(XBeeAddress64 poleAddress, uint8_t message) {
-void sendXbee() {
+void sendXbee(int poleNumber) {
+  msgToPole = ZBTxRequest(poleAddress[poleNumber], buttonPressed, sizeof(buttonPressed));
  //ZBTxRequest msgToPole = ZBTxRequest(coordinatorSJ, msgToCoordinatorSJ, sizeof(msgToCoordinatorSJ));
  xbee.send(msgToPole);
- Serial.print("message sent\n");
+ Serial.print("message sent to pole ");
+ Serial.println(poleNumber);
  
  if (xbee.readPacket(500)) {
     // got a response!

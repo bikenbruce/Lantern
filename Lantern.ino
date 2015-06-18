@@ -62,14 +62,14 @@ void t3Callback() {
 
 }
 
-int pole;
+int POLE;
 
 void setup() {
   //setup logging
   Serial.begin(115200);
   Serial.println("SETUP Start");
 
-  pole = EEPROM.read(0);
+  POLE = EEPROM.read(0);
   
   setupDMX();
   setupXbee();
@@ -99,11 +99,11 @@ void setup() {
 }
 
 void loop() {
-  if (pole == 8) {
-    Serial.println("yes, pole 8.");
-  } else {
-    Serial.println("No, not pole 8.");
-  }
+  // if (pole == 8) {
+  //   Serial.println("yes, pole 8.");
+  // } else {
+  //   Serial.println("No, not pole 8.");
+  // }
 
   runner.execute();
 

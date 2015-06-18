@@ -83,6 +83,12 @@ void SeqUp() {
     // Sequence has reached the top.
     SeqUpLevel = 0;
     rRateChange = 0;
+
+    for (int i = 6; i < 9; i++) {
+      if (i != POLE) {
+        sendXbee(i);
+      }
+    }
   }
 }
 
