@@ -152,13 +152,21 @@ int readXbee() {
           break;
 
         case 14:
-          Serial.print("event 14 received from pole ");
-          Serial.print(rx.getData(1));
+          Serial.print("14");
           break;
 
         case 15:
           Serial.print("Color Array received from pole ");
           Serial.println(rx.getData(1));
+
+          RGB colorArray[10];
+          for (int i = 0; i < 10; i++) {
+            colorArray[i].r = 10;
+            colorArray[i].g = 10;
+            colorArray[i].b = 10;
+          }
+
+          DrawArray(colorArray);
           break;
 
         case 30:

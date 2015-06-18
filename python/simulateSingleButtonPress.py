@@ -7,10 +7,8 @@ from numpy import random
 control = XbeePoleControl()
 control.open()
 
-# control.send(5, "\x0D\x01\xFF")
-control.send(6, "\x0D\x01\xFF")
-control.send(7, "\x0D\x01\xFF")
-control.send(8, "\x0D\x01\xFF")
+control.send(7, "\x00\xFF")
+control.send(7, "\x0E\x01\xFF")
 
 control.close()
 

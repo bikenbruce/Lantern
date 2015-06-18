@@ -122,7 +122,7 @@ void DrawAll() {
   pixels.show();
 }
 
-void DrawArray(int colorArray) {
+void DrawArray(RGB colorArray[]) {
   for(int i = 0; i < NUMPIXELS; i++) {
     pixels.setPixelColor(i, pixels.Color(r[i], g[i], b[i]));
   }
