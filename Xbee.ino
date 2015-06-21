@@ -31,40 +31,60 @@ void sendXbeePushButtonEvent(int poleDestination, int velocity) {
   sendXbee(msgToPole, poleDestination);
 }
 
-void sendXbee(ZBTxRequest msgToPole, int poleDestination) {
- xbee.send(msgToPole);
- Serial.print("Message sent to pole ");
- Serial.print(poleDestination);
- Serial.println(".");
- 
- if (xbee.readPacket(500)) {
-    // got a response!
+void sendXbeeButtonOnEvent(int poleDestination, int velocity) {
+  uint8_t buttonPressed[] = {16, POLE, velocity};
+  ZBTxRequest msgToPole = ZBTxRequest(poleAddress[poleDestination], buttonPressed, sizeof(buttonPressed));
+  sendXbee(msgToPole, poleDestination);
+}
 
-    // should be a znet tx status            	
-    if (xbee.getResponse().getApiId() == ZB_TX_STATUS_RESPONSE) {
-      xbee.getResponse().getZBTxStatusResponse(txStatus);
+void sendXbeeButtonOffEvent(int poleDestination) {
+  uint8_t buttonPressed[] = {17, POLE};
+  ZBTxRequest msgToPole = ZBTxRequest(poleAddress[poleDestination], buttonPressed, sizeof(buttonPressed));
+  sendXbee(msgToPole, poleDestination);
+}
+
+void sendXbee(ZBTxRequest msgToPole, int poleDestination) {
+  xbee.send(msgToPole);
+  Serial.print("Message sent to pole ");
+  Serial.print(poleDestination);
+  Serial.println(".");
+
+  //Not srue what the digit is for.
+  if (xbee.readPacket(50)) {
+  // got a response!
+    if (xbee.getResponse().isAvailable()) {
+      // should be a znet tx status             
+      if (xbee.getResponse().getApiId() == ZB_TX_STATUS_RESPONSE) {
+        xbee.getResponse().getZBTxStatusResponse(txStatus);
 
       // get the delivery status, the fifth byte
-      if (txStatus.getDeliveryStatus() == SUCCESS) {
+        if (txStatus.getDeliveryStatus() == SUCCESS) {
         // success.  time to celebrate
-        Serial.println("confirmation received.");
+          Serial.println("confirmation received.");
+
+        } else {
+          // the remote XBee did not receive our packet. is it powered on?
+          Serial.println("confirmation not received.");
         
-      } else {
-        // the remote XBee did not receive our packet. is it powered on?
-        Serial.println("confirmation not received.");
-        
+        }
+      } else if (xbee.getResponse().isError()) {
+        Serial.print("Error reading packet.  Error code: ");  
+        Serial.println(xbee.getResponse().getErrorCode());
+
       }
     }
   }
 }
 
 int readXbee() {
+
   xbee.readPacket();
 
-  if (xbee.getResponse().isAvailable()) {
-    Serial.println("message available.");
-    
-    if (xbee.getResponse().getApiId() == ZB_RX_RESPONSE) {
+  if (xbee.getResponse().getApiId() == ZB_RX_RESPONSE) {
+
+    if (xbee.getResponse().isAvailable()) {
+
+      Serial.println("Data is available.");
       
       // fill out zb rx class
       xbee.getResponse().getZBRxResponse(rx);
@@ -169,6 +189,32 @@ int readXbee() {
           DrawArray(colorArray);
           break;
 
+        case 16:
+          Serial.print("button on received from pole ");
+          Serial.println(rx.getData(1));
+          if (rx.getData(1) == 6) {
+            b[5] = 10;
+          } else if (rx.getData(1) == 7) {
+            b[6] = 10;
+          } else if (rx.getData(1) == 8) {
+            b[7] = 10;
+          }
+          
+          break;
+
+        case 17:
+          Serial.print("button off received from pole ");
+          Serial.println(rx.getData(1));
+          if (rx.getData(1) == 6) {
+            b[5] = 0;
+          } else if (rx.getData(1) == 7) {
+            b[6] = 0;
+          } else if (rx.getData(1) == 8) {
+            b[7] = 0;
+          }
+
+          break;
+
         case 30:
           // Set a Board, R/G/B, Value
           Serial.print("Set Board: ");
@@ -196,12 +242,20 @@ int readXbee() {
           break;
           // bruce test thing.....
 
-
         default:
           Serial.print("Nothing set for this value, which is ");
           Serial.println(rx.getData(0));
           // Oups!
       }
+    } else if (xbee.getResponse().isError()) {
+      Serial.print("Error reading packet.  Error code: "); 
+      Serial.print(xbee.getResponse().getErrorCode()); 
+      if (xbee.getResponse().getErrorCode() == CHECKSUM_FAILURE) {
+        Serial.println(" Checksum Failure.");        
+      } else if (xbee.getResponse().getErrorCode() == UNEXPECTED_START_BYTE) {
+        Serial.println(" Unexpected start byte.");
+      }
+
     }
   }
 }

@@ -52,16 +52,31 @@ void readPixel() {
     // turn LED on:    
     digitalWrite(ledPin, HIGH);
     if (prevButtonState == false) {
-      prevButtonState = true;
+      Serial.println();
       Serial.println("button on.");
+      prevButtonState = true;
+
+      for (int i = 6; i < 9; i++) {
+        if (i != POLE) {
+          sendXbeeButtonOnEvent(i, 255);
+        }
+      }
+
       rRateChange = 1;
     }
   } else {
     // turn LED off:
     digitalWrite(ledPin, LOW);
     if (prevButtonState == true) {
+      Serial.println();
       Serial.println("button off.");
       prevButtonState = false;
+
+      for (int i = 6; i < 9; i++) {
+        if (i != POLE) {
+          sendXbeeButtonOffEvent(i);
+        }
+      }
     }
   }
 }
@@ -86,9 +101,11 @@ void SeqUp() {
 
     for (int i = 6; i < 9; i++) {
       if (i != POLE) {
-        sendXbeePushButtonEvent(i, 255);
+        //sendXbeePushButtonEvent(i, 255);
       }
     }
+    // send to coordinator
+    //sendXbeePushButtonEvent(11, 255);
   }
 }
 
@@ -111,9 +128,17 @@ void SeqDown() {
   }
 }
 
+void PushButtonOn(int button) {
+  b[button] = 10;
+}
+
+void PushButtonOff(int button) {
+  b[button] = 0;
+}
+
 void DrawAll() {
-  r[SeqUpLevel] = SeqUpValue;
-  g[SeqDownLevel] = SeqDownValue;
+  //r[SeqUpLevel] = SeqUpValue;
+  //g[SeqDownLevel] = SeqDownValue;
 
   for(int i = 0; i < NUMPIXELS; i++) {
     pixels.setPixelColor(i, pixels.Color(r[i], g[i], b[i]));

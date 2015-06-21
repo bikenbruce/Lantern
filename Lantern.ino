@@ -79,25 +79,4 @@ void setup() {
 void loop() {
   runner.execute();
 
-  // if (readSensors() == 1) {
-  //   if (pushButtonState == 0) {
-  //     pushButtonState = 1;
-  //     Serial.println("button pressed.");
-
-  //   } 
-  // } else if (readSensors() == 0) {
-  //   if (pushButtonState == 1) {
-  //     pushButtonState = 0;
-  //     Serial.println("button released.");
-
-  //   }
-  // }
-
-  // frameCount += 1;
-  // if (frameCount > 200) {
-  //   frameCount = 0;
-  //   //sendXbee();
-
-  // }
-  
 }
