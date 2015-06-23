@@ -16,8 +16,8 @@ int POLE;
 
 Task t1(20,  -1, &t1Callback);
 Task t2(200, -1, &t2Callback);
-Task t3(100, -1, &t3Callback);
-Task t4(10,  -1, &t4Callback);
+Task t3(50, -1, &t3Callback);
+Task t4(5,  -1, &t4Callback);
 
 Scheduler runner;
 

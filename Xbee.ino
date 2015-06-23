@@ -7,7 +7,7 @@ ZBRxResponse rx = ZBRxResponse();
 
 void setupXbee() {
   //Serial3.begin(57600);
-  Serial3.begin(115200);
+  Serial3.begin(57600);
   xbee.setSerial(Serial3);
 
   poleAddress[0] = XBeeAddress64(0x00000000, 0x0000ffff);  // broadcast
