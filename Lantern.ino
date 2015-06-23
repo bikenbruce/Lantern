@@ -14,9 +14,10 @@
 
 int POLE;
 
-Task t1(20, -1, &t1Callback);
-Task t2(20, -1, &t2Callback);
-Task t3(10, -1, &t3Callback);
+Task t1(20,  -1, &t1Callback);
+Task t2(200, -1, &t2Callback);
+Task t3(100, -1, &t3Callback);
+Task t4(10,  -1, &t4Callback);
 
 Scheduler runner;
 
@@ -38,6 +39,10 @@ void t2Callback() {
 
 void t3Callback() {
   readPixel();
+  
+}
+
+void t4Callback() {
   readXbee();
 
 }
@@ -60,6 +65,8 @@ void setup() {
   Serial.println("Enabled t2");
   t3.enable();
   Serial.println("Enabled t3");
+  t4.enable();
+  Serial.println("Enabled t4");
 
   runner.init();
 
@@ -69,6 +76,8 @@ void setup() {
   Serial.println("added t2");
   runner.addTask(t3);
   Serial.println("added t3");
+  runner.addTask(t4);
+  Serial.println("added t4");
 
   SeqOff();
   SeqOn();

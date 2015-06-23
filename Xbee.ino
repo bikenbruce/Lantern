@@ -6,6 +6,7 @@ ZBTxStatusResponse txStatus = ZBTxStatusResponse();
 ZBRxResponse rx = ZBRxResponse();
 
 void setupXbee() {
+  //Serial3.begin(57600);
   Serial3.begin(115200);
   xbee.setSerial(Serial3);
 
@@ -50,7 +51,7 @@ void sendXbee(ZBTxRequest msgToPole, int poleDestination) {
   Serial.println(".");
 
   //Not srue what the digit is for.
-  if (xbee.readPacket(50)) {
+  if (xbee.readPacket(500)) {
   // got a response!
     if (xbee.getResponse().isAvailable()) {
       // should be a znet tx status             

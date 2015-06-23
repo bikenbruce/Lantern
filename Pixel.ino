@@ -62,6 +62,8 @@ void readPixel() {
         }
       }
 
+      //sendXbeeButtonOnEvent(11, 255);
+
       rRateChange = 1;
     }
   } else {
@@ -77,6 +79,8 @@ void readPixel() {
           sendXbeeButtonOffEvent(i);
         }
       }
+
+      //sendXbeeButtonOffEvent(11);
     }
   }
 }
