@@ -5,6 +5,8 @@ XBeeAddress64 poleAddress[12];
 ZBTxStatusResponse txStatus = ZBTxStatusResponse();
 ZBRxResponse rx = ZBRxResponse();
 
+int dataNum;
+
 void setupXbee() {
   //Serial3.begin(57600);
   Serial3.begin(57600);
@@ -42,6 +44,27 @@ void sendXbeeButtonOffEvent(int poleDestination) {
   uint8_t buttonPressed[] = {17, POLE};
   ZBTxRequest msgToPole = ZBTxRequest(poleAddress[poleDestination], buttonPressed, sizeof(buttonPressed));
   sendXbee(msgToPole, poleDestination);
+}
+
+void sendXbeeLongColorTest(int poleDestination) {
+  uint8_t buttonPressed[31];
+  buttonPressed[0] = 77;
+
+  for (int i = 1; i < 31; i++) {
+    buttonPressed[i] = random(0,10);
+
+  }
+
+  ZBTxRequest msgToPole = ZBTxRequest(poleAddress[poleDestination], buttonPressed, sizeof(buttonPressed));
+  sendXbee(msgToPole, poleDestination);
+
+}
+
+void sendXbeeAllOff(int poleDestination) {
+  uint8_t buttonPressed[] = {31, POLE};
+  ZBTxRequest msgToPole = ZBTxRequest(poleAddress[poleDestination], buttonPressed, sizeof(buttonPressed));
+  sendXbee(msgToPole, poleDestination);
+
 }
 
 void sendXbee(ZBTxRequest msgToPole, int poleDestination) {
@@ -163,7 +186,7 @@ int readXbee() {
 
         case 13:
           // push button event
-          Serial.print("push button event received from pole ");
+          Serial.print("13 push button event received from pole ");
           Serial.print(rx.getData(1));
           Serial.print(" with velocity of ");
           Serial.println(rx.getData(2));
@@ -177,7 +200,7 @@ int readXbee() {
           break;
 
         case 15:
-          Serial.print("Color Array received from pole ");
+          Serial.print("15 Color Array received from pole ");
           Serial.println(rx.getData(1));
 
           RGB colorArray[10];
@@ -191,7 +214,7 @@ int readXbee() {
           break;
 
         case 16:
-          Serial.print("button on received from pole ");
+          Serial.print("16 button on received from pole ");
           Serial.println(rx.getData(1));
           if (rx.getData(1) == 6) {
             b[5] = 10;
@@ -204,7 +227,7 @@ int readXbee() {
           break;
 
         case 17:
-          Serial.print("button off received from pole ");
+          Serial.print("17 button off received from pole ");
           Serial.println(rx.getData(1));
           if (rx.getData(1) == 6) {
             b[5] = 0;
@@ -231,17 +254,37 @@ int readXbee() {
 
         case 31:
           // All Off
+          Serial.println("31 All Off.");
           allOff();
+
+          for (int i = 0; i < 10; i++) {
+            r[i] = 0;
+            g[i] = 0;
+            b[i] = 0;
+
+          }
           break;
 
         case 32:
+          Serial.println("33");
           // off on
           allOn();
           break;
 
         case 77:
+          Serial.println("77 Full Color Test");
+
+          dataNum = 1;
+          for (int i = 0; i < 10; i++) {
+            r[i] = rx.getData(dataNum);
+            dataNum += 1;
+            g[i] = rx.getData(dataNum);
+            dataNum += 1;
+            b[i] = rx.getData(dataNum);
+            dataNum += 1;
+ 
+          }
           break;
-          // bruce test thing.....
 
         default:
           Serial.print("Nothing set for this value, which is ");
@@ -249,6 +292,7 @@ int readXbee() {
           // Oups!
       }
     } else if (xbee.getResponse().isError()) {
+      Serial.println("");
       Serial.print("Error reading packet.  Error code: "); 
       Serial.print(xbee.getResponse().getErrorCode()); 
       if (xbee.getResponse().getErrorCode() == CHECKSUM_FAILURE) {
@@ -256,6 +300,7 @@ int readXbee() {
       } else if (xbee.getResponse().getErrorCode() == UNEXPECTED_START_BYTE) {
         Serial.println(" Unexpected start byte.");
       }
+      Serial.println("");
 
     }
   }

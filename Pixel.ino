@@ -58,7 +58,8 @@ void readPixel() {
 
       for (int i = 6; i < 9; i++) {
         if (i != POLE) {
-          sendXbeeButtonOnEvent(i, 255);
+          //sendXbeeButtonOnEvent(i, 255);
+          sendXbeeLongColorTest(i);
         }
       }
 
@@ -76,7 +77,9 @@ void readPixel() {
 
       for (int i = 6; i < 9; i++) {
         if (i != POLE) {
-          sendXbeeButtonOffEvent(i);
+          //sendXbeeButtonOffEvent(i);
+          //sendXbeeLongColorTest(i);
+          sendXbeeAllOff(i);
         }
       }
 
