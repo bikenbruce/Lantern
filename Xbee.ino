@@ -28,34 +28,46 @@ void setupXbee() {
 
 }
 
+void sendXbeeHello(int poleDestination) {
+  uint8_t message[] = {0, POLE};
+  ZBTxRequest msgToPole = ZBTxRequest(poleAddress[poleDestination], message, sizeof(message));
+  sendXbee(msgToPole, poleDestination);
+}
+
+void sendXbeeHelloResponse(int poleDestination, int status) {
+  uint8_t message[] = {1, POLE, status};
+  ZBTxRequest msgToPole = ZBTxRequest(poleAddress[poleDestination], message, sizeof(message));
+  sendXbee(msgToPole, poleDestination);
+}
+
 void sendXbeePushButtonEvent(int poleDestination, int velocity) {
-  uint8_t buttonPressed[] = {13, POLE, velocity};
-  ZBTxRequest msgToPole = ZBTxRequest(poleAddress[poleDestination], buttonPressed, sizeof(buttonPressed));
+  uint8_t message[] = {13, POLE, velocity};
+  ZBTxRequest msgToPole = ZBTxRequest(poleAddress[poleDestination], message, sizeof(message));
   sendXbee(msgToPole, poleDestination);
 }
 
 void sendXbeeButtonOnEvent(int poleDestination, int velocity) {
-  uint8_t buttonPressed[] = {16, POLE, velocity};
-  ZBTxRequest msgToPole = ZBTxRequest(poleAddress[poleDestination], buttonPressed, sizeof(buttonPressed));
+  uint8_t message[] = {16, POLE, velocity};
+  ZBTxRequest msgToPole = ZBTxRequest(poleAddress[poleDestination], message, sizeof(message));
   sendXbee(msgToPole, poleDestination);
 }
 
 void sendXbeeButtonOffEvent(int poleDestination) {
-  uint8_t buttonPressed[] = {17, POLE};
-  ZBTxRequest msgToPole = ZBTxRequest(poleAddress[poleDestination], buttonPressed, sizeof(buttonPressed));
+  uint8_t message[] = {17, POLE};
+  ZBTxRequest msgToPole = ZBTxRequest(poleAddress[poleDestination], message, sizeof(message));
   sendXbee(msgToPole, poleDestination);
 }
 
 void sendXbeeLongColorTest(int poleDestination) {
-  uint8_t buttonPressed[31];
-  buttonPressed[0] = 77;
+  uint8_t message[31];
+  message[0] = 77;
 
   for (int i = 1; i < 31; i++) {
-    buttonPressed[i] = random(0,10);
+    message[i] = random(0,10);
 
   }
 
-  ZBTxRequest msgToPole = ZBTxRequest(poleAddress[poleDestination], buttonPressed, sizeof(buttonPressed));
+  ZBTxRequest msgToPole = ZBTxRequest(poleAddress[poleDestination], message, sizeof(message));
   sendXbee(msgToPole, poleDestination);
 
 }
@@ -120,13 +132,24 @@ int readXbee() {
 
       switch (rx.getData(0)) {
         case 0:
-          // get time
-          Serial.println("0");
+          // hello, are you here?
+          Serial.print("0");
+          Serial.print(" Hello / Basic Status Request Received ");
+          Serial.println(rx.getData(1));
+
+          sendXbeeHelloResponse(rx.getData(1), 1);
+
           break;
 
         case 1:
           // set time and return new time
-          Serial.println("1");
+          Serial.print("1");
+          Serial.print(" Hello / Basic Status Received ");
+          if (rx.getData(1) == 1) {
+            Serial.println("Good");
+          } else {
+            Serial.println("Bad");
+          }
           break;
 
         case 2:
@@ -300,6 +323,7 @@ int readXbee() {
       } else if (xbee.getResponse().getErrorCode() == UNEXPECTED_START_BYTE) {
         Serial.println(" Unexpected start byte.");
       }
+      
       Serial.println("");
 
     }
