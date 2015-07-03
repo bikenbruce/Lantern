@@ -11,6 +11,7 @@
 #include <EEPROM.h>
 
 #include "rgb.h"
+#include "comm.h"
 
 int POLE;
 

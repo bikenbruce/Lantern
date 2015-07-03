@@ -1,6 +1,6 @@
 XBee xbee = XBee();
 
-XBeeAddress64 poleAddress[12];
+PoleComm pole[12];
 
 ZBTxStatusResponse txStatus = ZBTxStatusResponse();
 ZBRxResponse rx = ZBRxResponse();
@@ -12,49 +12,55 @@ void setupXbee() {
   Serial3.begin(57600);
   xbee.setSerial(Serial3);
 
-  poleAddress[0] = XBeeAddress64(0x00000000, 0x0000ffff);  // broadcast
-  poleAddress[1] = XBeeAddress64(0x0013a200, 0x408d9e0e);  // pole 1
-  poleAddress[2] = XBeeAddress64(0x0013a200, 0x409140b6);  // pole 2
-  poleAddress[3] = XBeeAddress64(0x0013a200, 0x40914018);  // pole 3
-  poleAddress[4] = XBeeAddress64(0x0013a200, 0x408d9e5f);  // pole 4
-  poleAddress[5] = XBeeAddress64(0x0013a200, 0x40c91adf);  // pole 5
-  poleAddress[6] = XBeeAddress64(0x0013a200, 0x40d61a48);  // pole 6
-  poleAddress[7] = XBeeAddress64(0x0013a200, 0x40c91ae4);  // pole 7
-  poleAddress[8] = XBeeAddress64(0x0013a200, 0x40c5f951);  // pole 8
-  poleAddress[9] = XBeeAddress64(0x0013a200, 0x408cdb45);  // pole 9
-  poleAddress[10] = XBeeAddress64(0x0013a200, 0x407054ac);  // coordinator @ steve's house
-  poleAddress[11] = XBeeAddress64(0x0013a200, 0x408CDB42);  // coordinator @ SJSU
-  // XBeeAddress64 pole9address = XBeeAddress64(0x0013a200, 0x408cdb45);  // pole 9 (test at SJSU)
+  pole[0].address = XBeeAddress64(0x00000000, 0x0000ffff);  // broadcast
+  pole[1].address = XBeeAddress64(0x0013a200, 0x408d9e0e);  // pole 1
+  pole[2].address = XBeeAddress64(0x0013a200, 0x409140b6);  // pole 2
+  pole[3].address = XBeeAddress64(0x0013a200, 0x40914018);  // pole 3
+  pole[4].address = XBeeAddress64(0x0013a200, 0x408d9e5f);  // pole 4
+  pole[5].address = XBeeAddress64(0x0013a200, 0x40c91adf);  // pole 5
+  pole[6].address = XBeeAddress64(0x0013a200, 0x40d61a48);  // pole 6
+  pole[7].address = XBeeAddress64(0x0013a200, 0x40c91ae4);  // pole 7
+  pole[8].address = XBeeAddress64(0x0013a200, 0x40c5f951);  // pole 8
+  pole[9].address = XBeeAddress64(0x0013a200, 0x408cdb45);  // pole 9
+  pole[10].address = XBeeAddress64(0x0013a200, 0x408CDB42);  // coordinator
+
+  // poleAddress[11] = XBeeAddress64(0x0013a200, 0x407054ac);  // extra unit now.....
+  // poleAddress[12] = XBeeAddress64(0x0013a200, 0x408cdb45);  // pole 9 (test at SJSU)
+
+  // To Do:
+  // Need to confirm xbee setup with Poles / Lanterns 1 through 3 with the coordinator.
+
+  // Initialize xbees by testing network to each one
 
 }
 
 void sendXbeeHello(int poleDestination) {
   uint8_t message[] = {0, POLE};
-  ZBTxRequest msgToPole = ZBTxRequest(poleAddress[poleDestination], message, sizeof(message));
+  ZBTxRequest msgToPole = ZBTxRequest(pole[poleDestination].address, message, sizeof(message));
   sendXbee(msgToPole, poleDestination);
 }
 
-void sendXbeeHelloResponse(int poleDestination, int status) {
+void sendXbeeHelloReply(int poleDestination, int status) {
   uint8_t message[] = {1, POLE, status};
-  ZBTxRequest msgToPole = ZBTxRequest(poleAddress[poleDestination], message, sizeof(message));
+  ZBTxRequest msgToPole = ZBTxRequest(pole[poleDestination].address, message, sizeof(message));
   sendXbee(msgToPole, poleDestination);
 }
 
 void sendXbeePushButtonEvent(int poleDestination, int velocity) {
   uint8_t message[] = {13, POLE, velocity};
-  ZBTxRequest msgToPole = ZBTxRequest(poleAddress[poleDestination], message, sizeof(message));
+  ZBTxRequest msgToPole = ZBTxRequest(pole[poleDestination].address, message, sizeof(message));
   sendXbee(msgToPole, poleDestination);
 }
 
 void sendXbeeButtonOnEvent(int poleDestination, int velocity) {
   uint8_t message[] = {16, POLE, velocity};
-  ZBTxRequest msgToPole = ZBTxRequest(poleAddress[poleDestination], message, sizeof(message));
+  ZBTxRequest msgToPole = ZBTxRequest(pole[poleDestination].address, message, sizeof(message));
   sendXbee(msgToPole, poleDestination);
 }
 
 void sendXbeeButtonOffEvent(int poleDestination) {
   uint8_t message[] = {17, POLE};
-  ZBTxRequest msgToPole = ZBTxRequest(poleAddress[poleDestination], message, sizeof(message));
+  ZBTxRequest msgToPole = ZBTxRequest(pole[poleDestination].address, message, sizeof(message));
   sendXbee(msgToPole, poleDestination);
 }
 
@@ -67,14 +73,14 @@ void sendXbeeLongColorTest(int poleDestination) {
 
   }
 
-  ZBTxRequest msgToPole = ZBTxRequest(poleAddress[poleDestination], message, sizeof(message));
+  ZBTxRequest msgToPole = ZBTxRequest(pole[poleDestination].address, message, sizeof(message));
   sendXbee(msgToPole, poleDestination);
 
 }
 
 void sendXbeeAllOff(int poleDestination) {
   uint8_t buttonPressed[] = {31, POLE};
-  ZBTxRequest msgToPole = ZBTxRequest(poleAddress[poleDestination], buttonPressed, sizeof(buttonPressed));
+  ZBTxRequest msgToPole = ZBTxRequest(pole[poleDestination].address, buttonPressed, sizeof(buttonPressed));
   sendXbee(msgToPole, poleDestination);
 
 }
@@ -82,8 +88,7 @@ void sendXbeeAllOff(int poleDestination) {
 void sendXbee(ZBTxRequest msgToPole, int poleDestination) {
   xbee.send(msgToPole);
   Serial.print("Message sent to pole ");
-  Serial.print(poleDestination);
-  Serial.println(".");
+  Serial.println(poleDestination);
 
   //Not srue what the digit is for.
   if (xbee.readPacket(500)) {
@@ -137,7 +142,7 @@ int readXbee() {
           Serial.print(" Hello / Basic Status Request Received ");
           Serial.println(rx.getData(1));
 
-          sendXbeeHelloResponse(rx.getData(1), 1);
+          sendXbeeHelloReply(rx.getData(1), 1);
 
           break;
 
