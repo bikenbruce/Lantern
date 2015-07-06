@@ -2,50 +2,52 @@
 #include <XBee.h>
 #include <SPI.h>
 #include <SoftwareSerial.h>
-
 #include <TaskScheduler.h>
-
 #include <Adafruit_NeoPixel.h>
 #include <avr/power.h>
-
 #include <EEPROM.h>
+#include <StackArray.h>
 
 #include "rgb.h"
 #include "comm.h"
 
 int POLE;
 
-Task t1(20,  -1, &t1Callback);
-Task t2(200, -1, &t2Callback);
-Task t3(50, -1, &t3Callback);
+// Task t3(50, -1, &t3Callback);
 Task t4(5,  -1, &t4Callback);
+Task t5(10000, -1, &t5Callback);
 
 Scheduler runner;
 
-void t1Callback() {
-    // Serial.print("t1: ");
-    // Serial.println(millis());
-    SeqUp();
-    DrawAll();
-
-}
-
-void t2Callback() {
-    // Serial.print("t2: ");
-    // Serial.println(millis());
-    SeqDown();
-    DrawAll();
-
-}
-
-void t3Callback() {
-  readPixel();
+// void t3Callback() {
+//   // Read the button state
+//   // Send xbee data on button down and up events
+//   readButton();
   
-}
+// }
 
 void t4Callback() {
-  readXbee();
+  // CHecks the state of the button, sends xbee data on press / release events
+  readButton();
 
+  // This function reads the incoming xbee data and applies any changes to the data
+  readXbee();
+  
+  // send information from the data out to the lights
+  DrawAll();
+
+  // reply to xbee events....
+  sendXbeeQueue();
+
+}
+
+void t5Callback() {
+  // sends xbee status requests
+  for (int i = 6; i < 9; i++) {
+    if (i != POLE) {
+      sendXbeeStatusRequest(i);
+    }
+  }
 }
 
 void setup() {
@@ -53,6 +55,7 @@ void setup() {
   Serial.begin(115200);
   Serial.println("SETUP Start");
 
+  // Read the pole number from the EEPROM
   POLE = EEPROM.read(0);
   
   setupDMX();
@@ -60,28 +63,26 @@ void setup() {
   setupSensors();
   setupPixel();
 
-  t1.enable();
-  Serial.println("Enabled t1");
-  t2.enable();
-  Serial.println("Enabled t2");
-  t3.enable();
-  Serial.println("Enabled t3");
+  //t3.enable();
+  //Serial.println("Enabled t3");
   t4.enable();
   Serial.println("Enabled t4");
+  if (POLE == 6) {
+    t5.enable();
+    Serial.println("Enabled t5");
+  }
 
   runner.init();
 
-  runner.addTask(t1);
-  Serial.println("added t1");
-  runner.addTask(t2);
-  Serial.println("added t2");
-  runner.addTask(t3);
-  Serial.println("added t3");
+  //runner.addTask(t3);
+  //Serial.println("added t3");
   runner.addTask(t4);
   Serial.println("added t4");
+  if (POLE == 6) {
+    runner.addTask(t5);
+    Serial.println("added t5");
+  }
 
-  SeqOff();
-  SeqOn();
   delay(500);
   
 }
