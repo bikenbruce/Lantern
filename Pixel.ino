@@ -60,10 +60,6 @@ void readButton() {
 
         }
       }
-
-      if (POLE == 7) {
-        sendXbeeStatusReply(6, 1);
-      }
     }
   } else {
     // turn LED off:

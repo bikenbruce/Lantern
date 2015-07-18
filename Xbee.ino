@@ -10,7 +10,6 @@ ZBRxResponse rx = ZBRxResponse();
 int dataNum;
 
 void setupXbee() {
-  //Serial3.begin(57600);
   Serial3.begin(57600);
   xbee.setSerial(Serial3);
 
@@ -34,76 +33,71 @@ void setupXbee() {
 
 }
 
-void sendXbeeStatusRequest(int poleDestination) {
+void sendXbeeStatusRequest(int destination) {
   uint8_t msgNumber = 0;
   uint8_t message[] = {msgNumber, POLE};
-  ZBTxRequest msgToPole = ZBTxRequest(pole[poleDestination].address, message, sizeof(message));
-  addXbeeQueue(msgToPole, msgNumber, poleDestination);
+  ZBTxRequest zbMessage = ZBTxRequest(pole[destination].address, message, sizeof(message));
+  sendXbee(zbMessage, msgNumber, destination);
 }
 
-void sendXbeeStatusReply(int poleDestination, int status) {
+void sendXbeeStatusReply(int destination, int status) {
   uint8_t msgNumber = 1;
   uint8_t message[] = {msgNumber, POLE, status};
-  ZBTxRequest msgToPole = ZBTxRequest(pole[poleDestination].address, message, sizeof(message));
+  ZBTxRequest zbMessage = ZBTxRequest(pole[destination].address, message, sizeof(message));
   
   // currently does not work as expected
-  //addXbeeQueue(msgToPole, msgNumber, poleDestination);
+  //addXbeeQueue(zbMessage, msgNumber, destination);
   // works
-  sendXbee(msgToPole, msgNumber, poleDestination);
+  sendXbee(zbMessage, msgNumber, destination);
 }
 
-void sendXbeePushButtonEvent(int poleDestination, int velocity) {
+
+void sendXbeeAllOff(int destination) {
+  uint8_t msgNumber = 10;
+  uint8_t buttonPressed[] = {msgNumber, POLE};
+  ZBTxRequest zbMessage = ZBTxRequest(pole[destination].address, buttonPressed, sizeof(buttonPressed));
+  sendXbee(zbMessage, msgNumber, destination);
+
+}
+
+
+void sendXbeeButtonOnEvent(int destination, int velocity) {
   uint8_t msgNumber = 13;
   uint8_t message[] = {msgNumber, POLE, velocity};
-  ZBTxRequest msgToPole = ZBTxRequest(pole[poleDestination].address, message, sizeof(message));
-  addXbeeQueue(msgToPole, msgNumber, poleDestination);
+  ZBTxRequest zbMessage = ZBTxRequest(pole[destination].address, message, sizeof(message));
+  sendXbee(zbMessage, msgNumber, destination);
 }
 
-void sendXbeeButtonOnEvent(int poleDestination, int velocity) {
-  uint8_t msgNumber = 16;
-  uint8_t message[] = {msgNumber, POLE, velocity};
-  ZBTxRequest msgToPole = ZBTxRequest(pole[poleDestination].address, message, sizeof(message));
-  sendXbee(msgToPole, msgNumber, poleDestination);
-}
-
-void sendXbeeButtonOffEvent(int poleDestination) {
-  uint8_t msgNumber = 17;
+void sendXbeeButtonOffEvent(int destination) {
+  uint8_t msgNumber = 14;
   uint8_t message[] = {msgNumber, POLE};
-  ZBTxRequest msgToPole = ZBTxRequest(pole[poleDestination].address, message, sizeof(message));
-  sendXbee(msgToPole, msgNumber, poleDestination);
+  ZBTxRequest zbMessage = ZBTxRequest(pole[destination].address, message, sizeof(message));
+  sendXbee(zbMessage, msgNumber, destination);
 }
 
-void sendXbeeLongColorTest(int poleDestination) {
-  uint8_t msgNumber = 31;
-  uint8_t message[msgNumber];
-  message[0] = 77;
+void sendXbeeColorArray(int destination) {
+  // todo
+  // need to define variables for color arrays
+  // msgNumber 15
 
-  for (int i = 1; i < 31; i++) {
-    message[i] = random(0, 10);
-
-  }
-
-  ZBTxRequest msgToPole = ZBTxRequest(pole[poleDestination].address, message, sizeof(message));
-  sendXbee(msgToPole, msgNumber, poleDestination);
 }
 
-void sendXbeeAllOff(int poleDestination) {
-  uint8_t msgNumber = 31;
-  uint8_t buttonPressed[] = {msgNumber, POLE};
-  ZBTxRequest msgToPole = ZBTxRequest(pole[poleDestination].address, buttonPressed, sizeof(buttonPressed));
-  sendXbee(msgToPole, msgNumber, poleDestination);
+void sendXbeeSingleRGB(int destination, RGB values) {
+  uint8_t msgNumber = 16;
+  uint8_t message[] = {msgNumber, values.r, values.g, values.b};
+  ZBTxRequest zbMessage = ZBTxRequest(pole[destination].address, message, sizeof(message));
+  sendXbee(zbMessage, msgNumber, destination);
 
 }
 
 
-
-
-void addXbeeQueue(ZBTxRequest msgToPole, uint8_t msgNumber, int poleDestination) {
+void addXbeeQueue(ZBTxRequest zbMessage, uint8_t msgNumber, int destination) {
   PoleBuff msg;
-  msg.msgToPole = msgToPole;
+  msg.zbMessage = zbMessage;
   msg.msgNumber = msgNumber;
-  msg.poleDestination = poleDestination;
+  msg.destination = destination;
   stack.push(msg);
+  Serial.println("Message added to Queue.");
    
 }
 
@@ -111,45 +105,49 @@ void sendXbeeQueue() {
   PoleBuff msg;
   while (!stack.isEmpty()) {
     msg = stack.pop();
-    sendXbee(msg.msgToPole, msg.msgNumber, msg.poleDestination);
+    Serial.print("Message Number: ");
+    Serial.print(msg.msgNumber);
+    Serial.print(" Destination: ");
+    Serial.println(msg.destination);
+    sendXbee(msg.zbMessage, msg.msgNumber, msg.destination);
 
   }
 }
 
 
-void sendXbee(ZBTxRequest msgToPole, uint8_t msgNumber, int poleDestination) {
-  xbee.send(msgToPole);
+void sendXbee(ZBTxRequest zbMessage, uint8_t msgNumber, int destination) {
+  xbee.send(zbMessage);
   Serial.print(msgNumber);
   Serial.print(" Message sent to pole ");
-  Serial.println(poleDestination);
+  Serial.println(destination);
 
-  //Not srue what the digit is for.
-  if (xbee.readPacket(500)) {
-  // got a response!
-    if (xbee.getResponse().isAvailable()) {
-      // should be a znet tx status             
-      if (xbee.getResponse().getApiId() == ZB_TX_STATUS_RESPONSE) {
-        xbee.getResponse().getZBTxStatusResponse(txStatus);
+  //The readPacket Digit is for time out.
+  // if (xbee.readPacket(5)) {
+  // // got a response!
+  //   if (xbee.getResponse().isAvailable()) {
+  //     // should be a znet tx status             
+  //     if (xbee.getResponse().getApiId() == ZB_TX_STATUS_RESPONSE) {
+  //       xbee.getResponse().getZBTxStatusResponse(txStatus);
 
-      // get the delivery status, the fifth byte
-        if (txStatus.getDeliveryStatus() == SUCCESS) {
-        // success.  time to celebrate
-          Serial.println("  confirmation received");
+  //     // get the delivery status, the fifth byte
+  //       if (txStatus.getDeliveryStatus() == SUCCESS) {
+  //       // success.  time to celebrate
+  //         Serial.println("  confirmation received- sendXbee");
 
-        } else {
-          // the remote XBee did not receive our packet. is it powered on?
-          Serial.println("  confirmation not received");
+  //       } else {
+  //         // the remote XBee did not receive our packet. is it powered on?
+  //         Serial.println("  confirmation not received");
         
-        }
-      } else if (xbee.getResponse().isError()) {
-        Serial.print("  error reading packet. code: ");  
-        Serial.println(xbee.getResponse().getErrorCode());
+  //       }
+  //     } else if (xbee.getResponse().isError()) {
+  //       Serial.print("  error reading packet. code: ");  
+  //       Serial.println(xbee.getResponse().getErrorCode());
 
-      }
-    }
-  } else {
-    Serial.println("Nothing to read");
-  }
+  //     }
+  //   }
+  // } else {
+  //   Serial.println("  time out. nothing to read.");
+  // }
 }
 
 int readXbee() {
@@ -162,9 +160,9 @@ int readXbee() {
     // get the delivery status, the fifth byte
     if (txStatus.getDeliveryStatus() == SUCCESS) {
       // success.  time to celebrate
-      Serial.println("  confirmation received- readXbee");
+      // Debug option:
+      //Serial.println("  confirmation received- readXbee");
     } else {
-      // check for errors, I suppose.
       Serial.print("  tx error");
       Serial.println(txStatus.getDeliveryStatus());
 
@@ -205,64 +203,14 @@ int readXbee() {
           }
           break;
 
-        case 2:
-          // what is the temperature
-          Serial.println("2");
-          break;
-
-        case 3:
-          // nothing at this point
-          Serial.println("3");
-          break;
-
-        case 4:
-          // what is the start time for day of week?
-          Serial.println("4");
-          break;
-
-        case 5:
-          // what is the stop time for day of week?
-          Serial.println("5");
-          break;
-
-        case 6:
-          // set start time for day of week
-          Serial.println("6");
-          break;
-
-        case 7:
-          // set stop time for day of week
-          Serial.println("7");
-          break;
-
-        case 8:
-          // nothing at this point
-          Serial.println("8");
-          break;
-
-        case 9:
-          // nothing at this point
-          Serial.println("9");
-          break;
-
         case 10:
-          // nothing at this point
-          Serial.println("10");
-          break;
-
-        case 11:
-          // nothing at this point
-          Serial.println("11");
-          break;
-
-        case 12:
-          // nothing at this point
-          Serial.println("12");
+          // All Off
+          Serial.println("10 all off");
           break;
 
         case 13:
           // push button event
-          Serial.print("13 push button event received from pole ");
+          Serial.print("13 button on event received from pole ");
           Serial.print(rx.getData(1));
           Serial.print(" with velocity of ");
           Serial.println(rx.getData(2));
@@ -271,11 +219,12 @@ int readXbee() {
           break;
 
         case 14:
-          Serial.print("14");
+          Serial.print("14 button off received from pole");
+          Serial.print(rx.getData(1));
           break;
 
         case 15:
-          Serial.print("15 Color Array received from pole ");
+          Serial.print("15 color array received from pole ");
           Serial.println(rx.getData(1));
 
           RGB colorArray[10];
@@ -289,77 +238,10 @@ int readXbee() {
           break;
 
         case 16:
-          Serial.print("16 button on received from pole ");
+          Serial.print("16 color single received from pole ");
           Serial.println(rx.getData(1));
-          if (rx.getData(1) == 6) {
-            b[5] = 10;
-          } else if (rx.getData(1) == 7) {
-            b[6] = 10;
-          } else if (rx.getData(1) == 8) {
-            b[7] = 10;
-          }
+          // to do, set color received
           
-          break;
-
-        case 17:
-          Serial.print("17 button off received from pole ");
-          Serial.println(rx.getData(1));
-          if (rx.getData(1) == 6) {
-            b[5] = 0;
-          } else if (rx.getData(1) == 7) {
-            b[6] = 0;
-          } else if (rx.getData(1) == 8) {
-            b[7] = 0;
-          }
-
-          break;
-
-        case 30:
-          // Set a Board, R/G/B, Value
-          Serial.print("30 ");
-          Serial.print("Set Board: ");
-          Serial.print(rx.getData(1));
-          Serial.print(" Color: ");
-          Serial.print(rx.getData(2));
-          Serial.print(" Value: ");
-          Serial.println(rx.getData(3));
-
-          DmxSimple.write((rx.getData(1) - 1) * 4 + rx.getData(2), rx.getData(3));
-          DmxSimple.write(11, 255);
-          break;
-
-        case 31:
-          // All Off
-          Serial.println("31 all off");
-          //allOff();
-
-          // for (int i = 0; i < 10; i++) {
-          //   r[i] = 0;
-          //   g[i] = 0;
-          //   b[i] = 0;
-
-          // }
-          break;
-
-        case 32:
-          Serial.println("33");
-          // off on
-          allOn();
-          break;
-
-        case 77:
-          Serial.println("77 Full Color Array Data");
-
-          dataNum = 1;
-          for (int i = 0; i < 10; i++) {
-            r[i] = rx.getData(dataNum);
-            dataNum += 1;
-            g[i] = rx.getData(dataNum);
-            dataNum += 1;
-            b[i] = rx.getData(dataNum);
-            dataNum += 1;
- 
-          }
           break;
 
         default:

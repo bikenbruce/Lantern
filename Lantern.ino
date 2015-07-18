@@ -43,11 +43,17 @@ void t4Callback() {
 
 void t5Callback() {
   // sends xbee status requests
-  for (int i = 6; i < 9; i++) {
-    if (i != POLE) {
-      sendXbeeStatusRequest(i);
-    }
+
+  Serial.println("");
+  //for (int i = 6; i < 9; i++) {
+    // if (i != POLE) {
+    //   sendXbeeStatusRequest(i);
+    // }
+  if (POLE == 6) {
+    sendXbeeStatusRequest(7);
+    sendXbeeStatusRequest(8);
   }
+  //}
 }
 
 void setup() {

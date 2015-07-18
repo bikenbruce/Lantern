@@ -4,8 +4,8 @@ struct PoleComm {
 };
 
 struct PoleBuff {
-	ZBTxRequest msgToPole;
+	ZBTxRequest zbMessage;
 	uint8_t msgNumber;
-	int poleDestination;
+	int destination;
 
 };
