@@ -3,9 +3,7 @@ struct PoleComm {
   int status;
 };
 
-struct PoleBuff {
-	ZBTxRequest zbMessage;
-	uint8_t msgNumber;
-	int destination;
-
+struct ReplyBuff {
+	uint8_t messageNumber;
+	int destination; 
 };

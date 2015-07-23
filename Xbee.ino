@@ -1,6 +1,8 @@
 XBee xbee = XBee();
 PoleComm pole[12];
 
+StackArray <ReplyBuff> replyStack;
+
 ZBTxStatusResponse txStatus = ZBTxStatusResponse();
 ZBRxResponse rx = ZBRxResponse();
 
@@ -38,7 +40,11 @@ void sendXbeeStatusReply(int destination, int status) {
   uint8_t msgNumber = 1;
   uint8_t message[] = {msgNumber, POLE, status};
   ZBTxRequest zbMessage = ZBTxRequest(pole[destination].address, message, sizeof(message));
-  sendXbee(zbMessage, msgNumber, destination);
+  //sendXbee(zbMessage, msgNumber, destination);
+  ReplyBuff temp;
+  temp.messageNumber = 1;
+  temp.destination = destination; 
+  replyStack.push(temp);
 }
 
 void sendXbeeAllOff(int destination) {
@@ -77,12 +83,62 @@ void sendXbeeSingleRGB(int destination, RGB value) {
 
 }
 
+void sendStack() {
+  while(!replyStack.isEmpty()) {
+    ReplyBuff temp;
+    temp = replyStack.pop();
+    Serial.print("Message Number ");
+    Serial.print(temp.messageNumber);
+    Serial.print(" Destination ");
+    Serial.println(temp.destination);
+    sendXbee2(temp.messageNumber, temp.destination, 1);
+  }
+}
+
 
 void sendXbee(ZBTxRequest zbMessage, uint8_t msgNumber, int destination) {
   xbee.send(zbMessage);
   Serial.print(msgNumber);
-  Serial.print(" Message sent to pole ");
+  Serial.print(" Message sent to pole from stack ");
   Serial.println(destination);
+
+  //The readPacket Digit is for time out.
+  if (xbee.readPacket(500)) {
+  // got a response!
+    if (xbee.getResponse().isAvailable()) {
+      // should be a znet tx status             
+      if (xbee.getResponse().getApiId() == ZB_TX_STATUS_RESPONSE) {
+        xbee.getResponse().getZBTxStatusResponse(txStatus);
+
+      // get the delivery status, the fifth byte
+        if (txStatus.getDeliveryStatus() == SUCCESS) {
+        // success.  time to celebrate
+          Serial.println("  confirmation received by sendXbee method");
+
+        } else {
+          // the remote XBee did not receive our packet. is it powered on?
+          Serial.println("  confirmation not received");
+        
+        }
+      } else if (xbee.getResponse().isError()) {
+        Serial.print("  error reading packet. code: ");  
+        Serial.println(xbee.getResponse().getErrorCode());
+
+      }
+    }
+  } else {
+    Serial.println("  time out. nothing to read.");
+  }
+}
+
+void sendXbee2(uint8_t msgNumber, int destination, int status) {
+  uint8_t message[] = {msgNumber, POLE, status};
+  ZBTxRequest zbMessage = ZBTxRequest(pole[destination].address, message, sizeof(message));
+
+  xbee.send(zbMessage);
+  //Serial.print(msgNumber);
+  Serial.print(" Message sent to pole ");
+  //Serial.println(destination);
 
   //The readPacket Digit is for time out.
   if (xbee.readPacket(500)) {
@@ -148,13 +204,15 @@ int readXbee() {
           Serial.print("0 Status Request Received from ");
           Serial.println(rx.getData(1));
 
-          t6.enable();
-          t6.setInterval(100);
-          t6.setIterations(1);
-          //t6.setCallback(&test3(10));
-          // Serial.println("t6 Enabled");
-          // runner.addTask(t6);
-          // Serial.println("t6 Running");
+          statusReplyTimer.enable();
+          statusReplyTimer.setInterval(500);
+          statusReplyTimer.setIterations(1);
+          sendXbeeStatusReply(rx.getData(1), 1);
+
+          statusReplyTimer.setCallback(&sendStack);
+          Serial.println("statusReplyTimer Enabled");
+          runner.addTask(statusReplyTimer);
+          Serial.println("statusReplyTimer Running");
 
           break;
 
