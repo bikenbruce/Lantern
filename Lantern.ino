@@ -6,7 +6,6 @@
 #include <Adafruit_NeoPixel.h>
 #include <avr/power.h>
 #include <EEPROM.h>
-#include <StackArray.h>
 
 #include "rgb.h"
 #include "comm.h"
@@ -20,21 +19,17 @@ Task t6(1000, 1, &t6Callback);
 
 Scheduler runner;
 
-// void t3Callback() {
-//   // Read the button state
-//   // Send xbee data on button down and up events
-//   readButton();
-  
-// }
-
 void t4Callback() {
   // CHecks the state of the button, sends xbee data on press / release events
   readButton();
 
   // This function reads the incoming xbee data and applies any changes to the data
+  // If a message is read that needs a reply, a new task will be crated and will 
+  // responed a second later.  This seems to resolve an issue with communication
+  // between the xbees and the arduinos.
   readXbee();
   
-  // send information from the data out to the lights
+  // send information from the data out to the lights.
   DrawAll();
 
 }

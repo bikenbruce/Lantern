@@ -1,8 +1,5 @@
 XBee xbee = XBee();
-
 PoleComm pole[12];
-
-StackArray <PoleBuff> stack;
 
 ZBTxStatusResponse txStatus = ZBTxStatusResponse();
 ZBRxResponse rx = ZBRxResponse();
@@ -28,16 +25,6 @@ void setupXbee() {
   // poleAddress[11] = XBeeAddress64(0x0013a200, 0x407054ac);  // extra unit now.....
   // poleAddress[12] = XBeeAddress64(0x0013a200, 0x408cdb45);  // pole 9 (test at SJSU)
 
-  // To Do:
-  // Need to confirm xbee setup with Poles / Lanterns 1 through 3 with the coordinator.
-
-}
-
-ZBTxRequest testMessageToPole(int destination) {
-  uint8_t msgNumber = 1;
-  uint8_t message[] = {msgNumber, POLE, 1};
-  ZBTxRequest zbMessage = ZBTxRequest(pole[destination].address, message, sizeof(message));
-  return zbMessage;
 }
 
 void sendXbeeStatusRequest(int destination) {
@@ -54,7 +41,6 @@ void sendXbeeStatusReply(int destination, int status) {
   sendXbee(zbMessage, msgNumber, destination);
 }
 
-
 void sendXbeeAllOff(int destination) {
   uint8_t msgNumber = 10;
   uint8_t buttonPressed[] = {msgNumber, POLE};
@@ -62,7 +48,6 @@ void sendXbeeAllOff(int destination) {
   sendXbee(zbMessage, msgNumber, destination);
 
 }
-
 
 void sendXbeeButtonOnEvent(int destination, int velocity) {
   uint8_t msgNumber = 13;
@@ -91,7 +76,6 @@ void sendXbeeSingleRGB(int destination, RGB value) {
   sendXbee(zbMessage, msgNumber, destination);
 
 }
-
 
 
 void sendXbee(ZBTxRequest zbMessage, uint8_t msgNumber, int destination) {
@@ -129,40 +113,8 @@ void sendXbee(ZBTxRequest zbMessage, uint8_t msgNumber, int destination) {
   }
 }
 
-void sendXbeeTest(ZBTxRequest zbMessage) {
-  xbee.send(zbMessage);
-
-  //The readPacket Digit is for time out.
-  if (xbee.readPacket(500)) {
-  // got a response!
-    if (xbee.getResponse().isAvailable()) {
-      // should be a znet tx status             
-      if (xbee.getResponse().getApiId() == ZB_TX_STATUS_RESPONSE) {
-        xbee.getResponse().getZBTxStatusResponse(txStatus);
-
-      // get the delivery status, the fifth byte
-        if (txStatus.getDeliveryStatus() == SUCCESS) {
-        // success.  time to celebrate
-          Serial.println("  confirmation received by sendXbee method");
-
-        } else {
-          // the remote XBee did not receive our packet. is it powered on?
-          Serial.println("  confirmation not received");
-        
-        }
-      } else if (xbee.getResponse().isError()) {
-        Serial.print("  error reading packet. code: ");  
-        Serial.println(xbee.getResponse().getErrorCode());
-
-      }
-    }
-  } else {
-    Serial.println("  time out. nothing to read.");
-  }
-}
 
 int readXbee() {
-
   xbee.readPacket();
 
   if (xbee.getResponse().getApiId() == ZB_TX_STATUS_RESPONSE) {
@@ -199,11 +151,10 @@ int readXbee() {
           t6.enable();
           t6.setInterval(100);
           t6.setIterations(1);
-          //ZBTxRequest testMessage = testMessageToPole(6);
-          //t6.setCallback(&sendXbeeTest(messageToSend));
-          Serial.println("t6 Enabled");
-          runner.addTask(t6);
-          Serial.println("t6 Running");
+          //t6.setCallback(&test3(10));
+          // Serial.println("t6 Enabled");
+          // runner.addTask(t6);
+          // Serial.println("t6 Running");
 
           break;
 
