@@ -85,13 +85,12 @@ void sendXbeeSingleRGB(int destination, RGB value) {
 
 void sendStack() {
   while(!replyStack.isEmpty()) {
-    ReplyBuff temp;
-    temp = replyStack.pop();
-    Serial.print("Message Number ");
-    Serial.print(temp.messageNumber);
-    Serial.print(" Destination ");
-    Serial.println(temp.destination);
-    sendXbee2(temp.messageNumber, temp.destination, 1);
+    ReplyBuff temp = replyStack.pop();
+    // Serial.print("Message Number ");
+    // Serial.print(temp.messageNumber);
+    // Serial.print(" Destination ");
+    // Serial.println(temp.destination);
+    sendXbeeFromStack(temp.messageNumber, temp.destination, 1);
   }
 }
 
@@ -99,8 +98,8 @@ void sendStack() {
 void sendXbee(ZBTxRequest zbMessage, uint8_t msgNumber, int destination) {
   xbee.send(zbMessage);
   Serial.print(msgNumber);
-  Serial.print(" Message sent to pole from stack ");
-  Serial.println(destination);
+  Serial.print(" Message sent to pole ");
+  Serial.print(destination);
 
   //The readPacket Digit is for time out.
   if (xbee.readPacket(500)) {
@@ -113,11 +112,11 @@ void sendXbee(ZBTxRequest zbMessage, uint8_t msgNumber, int destination) {
       // get the delivery status, the fifth byte
         if (txStatus.getDeliveryStatus() == SUCCESS) {
         // success.  time to celebrate
-          Serial.println("  confirmation received by sendXbee method");
+          Serial.println("    confirmation received by sendXbee method");
 
         } else {
           // the remote XBee did not receive our packet. is it powered on?
-          Serial.println("  confirmation not received");
+          Serial.println("    confirmation not received");
         
         }
       } else if (xbee.getResponse().isError()) {
@@ -131,13 +130,13 @@ void sendXbee(ZBTxRequest zbMessage, uint8_t msgNumber, int destination) {
   }
 }
 
-void sendXbee2(uint8_t msgNumber, int destination, int status) {
+void sendXbeeFromStack(uint8_t msgNumber, int destination, int status) {
   uint8_t message[] = {msgNumber, POLE, status};
   ZBTxRequest zbMessage = ZBTxRequest(pole[destination].address, message, sizeof(message));
 
   xbee.send(zbMessage);
   //Serial.print(msgNumber);
-  Serial.print(" Message sent to pole ");
+  Serial.print("1 Reply message sent to pole from stack ");
   //Serial.println(destination);
 
   //The readPacket Digit is for time out.
@@ -151,11 +150,11 @@ void sendXbee2(uint8_t msgNumber, int destination, int status) {
       // get the delivery status, the fifth byte
         if (txStatus.getDeliveryStatus() == SUCCESS) {
         // success.  time to celebrate
-          Serial.println("  confirmation received by sendXbee method");
+          Serial.println("    confirmation received by sendXbeeFromStack method");
 
         } else {
           // the remote XBee did not receive our packet. is it powered on?
-          Serial.println("  confirmation not received");
+          Serial.println("    confirmation not received");
         
         }
       } else if (xbee.getResponse().isError()) {
@@ -210,9 +209,9 @@ int readXbee() {
           sendXbeeStatusReply(rx.getData(1), 1);
 
           statusReplyTimer.setCallback(&sendStack);
-          Serial.println("statusReplyTimer Enabled");
+          //Serial.println("statusReplyTimer Enabled");
           runner.addTask(statusReplyTimer);
-          Serial.println("statusReplyTimer Running");
+          //Serial.println("statusReplyTimer Running");
 
           break;
 
