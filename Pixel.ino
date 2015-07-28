@@ -24,9 +24,6 @@ int SeqUpValue = 0;
 int SeqDownLevel = 7;
 int SeqDownValue = 0;
 
-extern int rRateChange = 1;
-extern int gRateChange = 1;
-
 int r[8];
 int g[8];
 int b[8];
@@ -42,111 +39,48 @@ void setupPixel() {
 }
 
 
-void readPixel() {
+void readButton() {
   // read the state of the pushbutton value:
   buttonState = digitalRead(buttonPin);
 
   // check if the pushbutton is pressed.
   // if it is, the buttonState is HIGH:
   if (buttonState == HIGH) {     
-    // turn LED on:    
-    digitalWrite(ledPin, HIGH);
+    // turn LED on:   
+    //digitalWrite(ledPin, HIGH);
     if (prevButtonState == false) {
-      Serial.println();
-      Serial.println("button on.");
+      
+      Serial.println("BUTTON ON");
       prevButtonState = true;
 
       for (int i = 6; i < 9; i++) {
         if (i != POLE) {
-          //sendXbeeButtonOnEvent(i, 255);
-          sendXbeeLongColorTest(i);
+          sendXbeeButtonOnEvent(i, 10);
+          //sendXbeeLongColorTest(i);
+
         }
       }
-
-      //sendXbeeButtonOnEvent(11, 255);
-
-      rRateChange = 1;
     }
   } else {
     // turn LED off:
-    digitalWrite(ledPin, LOW);
+    //digitalWrite(ledPin, LOW);
     if (prevButtonState == true) {
-      Serial.println();
-      Serial.println("button off.");
+      
+      Serial.println("BUTTON OFF");
       prevButtonState = false;
 
       for (int i = 6; i < 9; i++) {
         if (i != POLE) {
-          //sendXbeeButtonOffEvent(i);
-          //sendXbeeLongColorTest(i);
-          sendXbeeAllOff(i);
+          sendXbeeButtonOffEvent(i);
+
         }
       }
-
-      //sendXbeeButtonOffEvent(11);
     }
   }
 }
 
-
-void SeqUp() {
-  SeqUpValue += rRateChange;
-
-  if (SeqUpValue > 10) {
-    // Resets the current lit LED to 0
-    r[SeqUpLevel] = 0;
-    // Reset the briightness to 0
-    SeqUpValue = 0;
-    // Jump to the next LED
-    SeqUpLevel += 1;
-  }
-
-  if (SeqUpLevel > 7) {
-    // Sequence has reached the top.
-    SeqUpLevel = 0;
-    rRateChange = 0;
-
-    for (int i = 6; i < 9; i++) {
-      if (i != POLE) {
-        //sendXbeePushButtonEvent(i, 255);
-      }
-    }
-    // send to coordinator
-    //sendXbeePushButtonEvent(11, 255);
-  }
-}
-
-void SeqDown() {
-  SeqDownValue += gRateChange;
-
-  if (SeqDownValue > 10) {
-    // Set the current LED to 0
-    g[SeqDownLevel] = 0;
-    // Reset the brightness to 0
-    SeqDownValue = 0;
-    //Jump to the next LED
-    SeqDownLevel -= 1;
-  }
-
-  if (SeqDownLevel < 0) {
-    // Sequence has reahed the bottom.
-    SeqDownLevel = 7;
-    gRateChange = 0;
-  }
-}
-
-void PushButtonOn(int button) {
-  b[button] = 10;
-}
-
-void PushButtonOff(int button) {
-  b[button] = 0;
-}
 
 void DrawAll() {
-  //r[SeqUpLevel] = SeqUpValue;
-  //g[SeqDownLevel] = SeqDownValue;
-
   for(int i = 0; i < NUMPIXELS; i++) {
     pixels.setPixelColor(i, pixels.Color(r[i], g[i], b[i]));
   }
@@ -154,6 +88,9 @@ void DrawAll() {
   pixels.show();
 }
 
+// ToDo
+// Confirm this works
+// Needs to draw the colors from the Array
 void DrawArray(RGB colorArray[]) {
   for(int i = 0; i < NUMPIXELS; i++) {
     pixels.setPixelColor(i, pixels.Color(r[i], g[i], b[i]));
@@ -163,23 +100,21 @@ void DrawArray(RGB colorArray[]) {
 }
 
 void SeqOn() {
-
   // For a set of NeoPixels the first NeoPixel is 0, second is 1, all the way up to the count of pixels minus one.
 
-  for(int i=0;i<NUMPIXELS;i++){
+  for(int i = 0; i < NUMPIXELS; i++) {
     // pixels.Color takes RGB values, from 0,0,0 up to 255,255,255
     pixels.setPixelColor(i, pixels.Color(10,0,0)); // Moderately bright green color.
     pixels.show(); // This sends the updated pixel color to the hardware.
-    delay(delayval); // Delay for a period of time (in milliseconds).
+    //delay(delayval); // Delay for a period of time (in milliseconds).
   }
 }
 
 
 void SeqOff() {
-
   // For a set of NeoPixels the first NeoPixel is 0, second is 1, all the way up to the count of pixels minus one.
 
-  for(int i=0;i<NUMPIXELS;i++){
+  for(int i = 0; i < NUMPIXELS; i++) {
     // pixels.Color takes RGB values, from 0,0,0 up to 255,255,255
     pixels.setPixelColor(i, pixels.Color(0,0,0)); // Moderately bright green color.
     pixels.show(); // This sends the updated pixel color to the hardware.

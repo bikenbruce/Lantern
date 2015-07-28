@@ -2,57 +2,57 @@
 #include <XBee.h>
 #include <SPI.h>
 #include <SoftwareSerial.h>
-
 #include <TaskScheduler.h>
-
 #include <Adafruit_NeoPixel.h>
 #include <avr/power.h>
-
 #include <EEPROM.h>
+#include <StackArray.h>
 
 #include "rgb.h"
 #include "comm.h"
 
 int POLE;
 
-Task t1(20,  -1, &t1Callback);
-Task t2(200, -1, &t2Callback);
-Task t3(50, -1, &t3Callback);
-Task t4(5,  -1, &t4Callback);
+// Task t3(50, -1, &t3Callback);
+Task mainTimer(5,  -1, &mainCallback);
+Task statusRequestTimer(10000, -1, &statusRequestCallback);
+Task statusReplyTimer(1000, 1, &statusRequestCallback);
 
 Scheduler runner;
 
-void t1Callback() {
-    // Serial.print("t1: ");
-    // Serial.println(millis());
-    SeqUp();
-    DrawAll();
+void mainCallback() {
+  // CHecks the state of the button, sends xbee data on press / release events
+  readButton();
 
-}
-
-void t2Callback() {
-    // Serial.print("t2: ");
-    // Serial.println(millis());
-    SeqDown();
-    DrawAll();
-
-}
-
-void t3Callback() {
-  readPixel();
-  
-}
-
-void t4Callback() {
+  // This function reads the incoming xbee data and applies any changes to the data
+  // If a message is read that needs a reply, a new task will be crated and will 
+  // responed a second later.  This seems to resolve an issue with communication
+  // between the xbees and the arduinos.
   readXbee();
+  
+  // send information from the data out to the lights.
+  DrawAll();
 
 }
+
+void statusRequestCallback() {
+  // sends xbee status requests
+
+  Serial.println("");
+  for (int i = 6; i < 9; i++) {
+    if (i != POLE) {
+      sendXbeeStatusRequest(i);
+    }
+  }
+}
+
 
 void setup() {
   //setup logging
   Serial.begin(115200);
   Serial.println("SETUP Start");
 
+  // Read the pole number from the EEPROM
   POLE = EEPROM.read(0);
   
   setupDMX();
@@ -60,28 +60,20 @@ void setup() {
   setupSensors();
   setupPixel();
 
-  t1.enable();
-  Serial.println("Enabled t1");
-  t2.enable();
-  Serial.println("Enabled t2");
-  t3.enable();
-  Serial.println("Enabled t3");
-  t4.enable();
-  Serial.println("Enabled t4");
+  mainTimer.enable();
+  Serial.println("mainTimer Enabled");
+
+  statusRequestTimer.enable();
+  Serial.println("statusRequestTimer Enabled");
 
   runner.init();
 
-  runner.addTask(t1);
-  Serial.println("added t1");
-  runner.addTask(t2);
-  Serial.println("added t2");
-  runner.addTask(t3);
-  Serial.println("added t3");
-  runner.addTask(t4);
-  Serial.println("added t4");
+  runner.addTask(mainTimer);
+  Serial.println("mainTimer added");
 
-  SeqOff();
-  SeqOn();
+  runner.addTask(statusRequestTimer);
+  Serial.println("statusRequestTimer added");
+
   delay(500);
   
 }

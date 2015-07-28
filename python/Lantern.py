@@ -50,7 +50,7 @@ class XbeePoleControl:
 		elif len(usb_ports) > 1:
 			print "many usb devices found. usb port not set."
 
-		self.baud = 115200
+		self.baud = 57600
 
 	def open(self):
 		self.serial = Serial(self.usb_port, self.baud)

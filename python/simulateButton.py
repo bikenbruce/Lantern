@@ -1,10 +1,10 @@
-from Lantern import XbeePoleControl
+from Lantern import XbeePoleLantern
 from time import sleep
 from numpy import random
 
 # sleep(0.50)
 
-control = XbeePoleControl()
+control = XbeePoleLantern()
 control.open()
 
 try:
