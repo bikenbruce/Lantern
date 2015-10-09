@@ -64,8 +64,8 @@ int readSensors() {
   // Serial.print(ReadTimeDate()); // Print out time in month/day/year
   // Serial.print(" pz-"); // Print out ana value for piezo(knock) sensor from big button
   // Serial.print(anaArrRaw[0]); 
-  //Serial.print(" bn-"); // Print out dig value from big button
-  //Serial.print(dArrRaw[0]);
+  // Serial.print(" bn-"); // Print out dig value from big button
+  // Serial.print(dArrRaw[0]);
  
   // Serial.print(" it-"); // Print out ana value from internal temp sensor
   // Serial.print(intemp);

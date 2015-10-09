@@ -13,9 +13,9 @@ Adafruit_NeoPixel pixels = Adafruit_NeoPixel(NUMPIXELS, PIN, NEO_GRB + NEO_KHZ80
 int delayval = 100; // delay for half a second
 
 const int buttonPin = 24;     // the number of the pushbutton pin
-const int ledPin = 13;      // the number of the LED pin
+const int ledPin = 13;        // the number of the LED pin
 
-int buttonState = 0;         // variable for reading the pushbutton status
+int buttonState = 0;          // variable for reading the pushbutton status
 bool prevButtonState = false;
 
 int SeqUpLevel = 0;
@@ -41,11 +41,12 @@ void setupPixel() {
 
 void readButton() {
   // read the state of the pushbutton value:
-  buttonState = digitalRead(buttonPin);
+  // buttonState = digitalRead(buttonPin);
+  buttonState = readSensors();
 
   // check if the pushbutton is pressed.
   // if it is, the buttonState is HIGH:
-  if (buttonState == HIGH) {     
+  if (buttonState == 1) {     
     // turn LED on:   
     //digitalWrite(ledPin, HIGH);
     if (prevButtonState == false) {
@@ -55,7 +56,7 @@ void readButton() {
 
       for (int i = 6; i < 9; i++) {
         if (i != POLE) {
-          sendXbeeButtonOnEvent(i, 10);
+          //sendXbeeButtonOnEvent(i, 10);
           //sendXbeeLongColorTest(i);
 
         }

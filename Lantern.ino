@@ -23,6 +23,7 @@ Scheduler runner;
 void mainCallback() {
   // CHecks the state of the button, sends xbee data on press / release events
   readButton();
+  // readSensors();
 
   // This function reads the incoming xbee data and applies any changes to the data
   // If a message is read that needs a reply, a new task will be crated and will 
@@ -54,6 +55,9 @@ void setup() {
 
   // Read the pole number from the EEPROM
   POLE = EEPROM.read(0);
+
+  Serial.print("I am pole ");
+  Serial.println(POLE);
   
   setupDMX();
   setupXbee();
