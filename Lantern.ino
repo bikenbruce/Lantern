@@ -22,7 +22,7 @@ Scheduler runner;
 
 void mainCallback() {
   // CHecks the state of the button, sends xbee data on press / release events
-  readButton();
+  readPushButton();
   // readSensors();
 
   // This function reads the incoming xbee data and applies any changes to the data
@@ -32,17 +32,18 @@ void mainCallback() {
   readXbee();
   
   // send information from the data out to the lights.
-  DrawAll();
+  // DrawAllPixel();
+  //DrawAllLEDs();
+
 
 }
 
 void statusRequestCallback() {
   // sends xbee status requests
 
-  Serial.println("");
-  for (int i = 6; i < 9; i++) {
+  for (int i = 1; i < 4; i++) {
     if (i != POLE) {
-      sendXbeeStatusRequest(i);
+      // sendXbeeStatusRequest(i);
     }
   }
 }
@@ -62,7 +63,7 @@ void setup() {
   setupDMX();
   setupXbee();
   setupSensors();
-  setupPixel();
+  //setupPixel();
 
   mainTimer.enable();
   Serial.println("mainTimer Enabled");

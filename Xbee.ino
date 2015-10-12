@@ -235,13 +235,19 @@ int readXbee() {
           // push button event
           Serial.print("13 button on event received from pole ");
           Serial.println(rx.getData(1));
-          //Serial.print(" with velocity of ");
-          //Serial.println("0");
+
+          allOn(150);
+          ledBoardOn(rx.getData(1) * 2);
+          ledBoardOn((rx.getData(1) * 2) - 1);
           break;
 
         case 14:
           Serial.print("14 button off received from pole ");
           Serial.println(rx.getData(1));
+
+          ledBoardOff(rx.getData(1) * 2);
+          ledBoardOff((rx.getData(1) * 2) -1);
+          allOn(100);
           break;
 
         case 15:

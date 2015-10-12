@@ -92,44 +92,52 @@ int readSensors() {
 }
 
   
-//  if ( dArrRaw[1] == 1 ) {
-//   
-//    for (LEDBoard = 0; LEDBoard < 10; LEDBoard++) {
-//      DmxSimple.write(LEDBoard * 4 + 1, 255);
-//      DmxSimple.write(LEDBoard * 4 + 2, 0);
-//      DmxSimple.write(LEDBoard * 4 + 3, 0);
-//      delay(Timer1);
-//    }
-//    
-//  } else {
-//    
-//     for (LEDBoard = 0; LEDBoard < 10; LEDBoard++) {
-//      DmxSimple.write(LEDBoard * 4 + 1, 0);
-//      DmxSimple.write(LEDBoard * 4 + 2, 0);
-//      DmxSimple.write(LEDBoard * 4 + 3, 0);
-//      delay(Timer1);
-//    }
-//  }
-    
-//   if ( dArrRaw[2] == 1 ) {
-//   
-//    for (LEDBoard = 0; LEDBoard < 10; LEDBoard++) {
-//      DmxSimple.write(LEDBoard * 4 + 1, 0);
-//      DmxSimple.write(LEDBoard * 4 + 2, 255);
-//      DmxSimple.write(LEDBoard * 4 + 3, 0);
-//      delay(Timer1);
-//    }
-//    
-//  } else {
-//    
-//     for (LEDBoard = 0; LEDBoard < 10; LEDBoard++) {
-//      DmxSimple.write(LEDBoard * 4 + 1, 0);
-//      DmxSimple.write(LEDBoard * 4 + 2, 0);
-//      DmxSimple.write(LEDBoard * 4 + 3, 0);
-//      delay(Timer1);
-//    }
-//  }
+void readPushButton() {
+  // read the state of the pushbutton value:
+  // buttonState = digitalRead(buttonPin);
+  buttonState = readSensors();
 
-//}
+  // check if the pushbutton is pressed.
+  // if it is, the buttonState is HIGH:
+  if (buttonState == 1) {     
+    // turn LED on:   
+    //digitalWrite(ledPin, HIGH);
+    if (prevButtonState == false) {
+      
+      Serial.println("BUTTON ON");
+      prevButtonState = true;
+
+      for (int i = 1; i < 5; i++) {
+        allOn(150);
+        ledBoardOn(POLE * 2);
+        ledBoardOn((POLE * 2) - 1);
+        if (i != POLE) {
+          sendXbeeButtonOnEvent(i, 10);
+          //sendXbeeLongColorTest(i);
+
+        }
+      }
+    }
+  } else {
+    // turn LED off:
+    //digitalWrite(ledPin, LOW);
+    if (prevButtonState == true) {
+      
+      Serial.println("BUTTON OFF");
+      prevButtonState = false;
+
+      for (int i = 1; i < 5; i++) {
+        ledBoardOff(POLE * 2);
+        ledBoardOff((POLE * 2) - 1);
+        allOn(100);
+
+        if (i != POLE) {
+          sendXbeeButtonOffEvent(i);
+
+        }
+      }
+    }
+  }
+}
 
 

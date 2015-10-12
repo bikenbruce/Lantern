@@ -56,6 +56,7 @@ void readButton() {
 
       for (int i = 6; i < 9; i++) {
         if (i != POLE) {
+          //allOn();
           //sendXbeeButtonOnEvent(i, 10);
           //sendXbeeLongColorTest(i);
 
@@ -72,7 +73,8 @@ void readButton() {
 
       for (int i = 6; i < 9; i++) {
         if (i != POLE) {
-          sendXbeeButtonOffEvent(i);
+          //allOff();
+          //sendXbeeButtonOffEvent(i);
 
         }
       }
@@ -81,7 +83,7 @@ void readButton() {
 }
 
 
-void DrawAll() {
+void DrawAllPixel() {
   for(int i = 0; i < NUMPIXELS; i++) {
     pixels.setPixelColor(i, pixels.Color(r[i], g[i], b[i]));
   }
