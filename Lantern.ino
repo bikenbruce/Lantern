@@ -55,6 +55,9 @@ void setup() {
 
   POLE = EEPROM.read(0);
   
+  Serial.print("I am pole ");
+  Serial.println(POLE);
+  
   setupDMX();
   setupXbee();
   setupSensors();

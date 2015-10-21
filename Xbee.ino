@@ -8,7 +8,6 @@ ZBRxResponse rx = ZBRxResponse();
 int dataNum;
 
 void setupXbee() {
-  //Serial3.begin(57600);
   Serial3.begin(57600);
   xbee.setSerial(Serial3);
 
@@ -21,16 +20,11 @@ void setupXbee() {
   pole[6].address = XBeeAddress64(0x0013a200, 0x40d61a48);  // pole 6
   pole[7].address = XBeeAddress64(0x0013a200, 0x40c91ae4);  // pole 7
   pole[8].address = XBeeAddress64(0x0013a200, 0x40c5f951);  // pole 8
-  pole[9].address = XBeeAddress64(0x0013a200, 0x408cdb45);  // pole 9
-  pole[10].address = XBeeAddress64(0x0013a200, 0x408CDB42);  // coordinator
 
-  // poleAddress[11] = XBeeAddress64(0x0013a200, 0x407054ac);  // extra unit now.....
-  // poleAddress[12] = XBeeAddress64(0x0013a200, 0x408cdb45);  // pole 9 (test at SJSU)
 
-  // To Do:
-  // Need to confirm xbee setup with Poles / Lanterns 1 through 3 with the coordinator.
-
-  // Initialize xbees by testing network to each one
+  pole[9].address = XBeeAddress64(0x0013a200, 0x408CDB42);  // Test Router 1
+  pole[10].address = XBeeAddress64(0x0013a200, 0x407054ac);  // Test Router 2
+  pole[11].address = XBeeAddress64(0x0013a200, 0x408cdb45);  // Test Router 3
 
 }
 
