@@ -9,17 +9,17 @@ void allOff() {
 
 void allOn(int brightness) {
   for (int board = 0; board < 11; board++) {
-   DmxSimple.write(board * 4 + 1, brightness - 30);
+   DmxSimple.write(board * 4 + 1, brightness);
    DmxSimple.write(board * 4 + 2, brightness);
-   DmxSimple.write(board * 4 + 3, brightness);
+   DmxSimple.write(board * 4 + 3, brightness - 50);
  
  }
 }
 
 void ledBoardOn(int board) {
-   DmxSimple.write(board * 4 + 1, 100);
+   DmxSimple.write(board * 4 + 1, 255);
    DmxSimple.write(board * 4 + 2, 255);
-   DmxSimple.write(board * 4 + 3, 100);
+   DmxSimple.write(board * 4 + 3, 255);
 
 }
 

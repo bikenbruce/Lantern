@@ -24,7 +24,7 @@ void setupDMX() {
   // sample off
   digitalWrite(8, LOW);
 
-  allOff();
+  allOn(255);
   
 }
 

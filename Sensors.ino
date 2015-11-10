@@ -109,13 +109,13 @@ void readPushButton() {
 
       for (int i = 1; i < 5; i++) {
         allOn(150);
-        ledBoardOn(POLE * 2);
-        ledBoardOn((POLE * 2) - 1);
-        if (i != POLE) {
-          sendXbeeButtonOnEvent(i, 10);
+        // ledBoardOn(POLE * 2);
+        // ledBoardOn((POLE * 2) - 1);
+        //if (i != POLE) {
+          //sendXbeeButtonOnEvent(i, 10);
           //sendXbeeLongColorTest(i);
 
-        }
+        //}
       }
     }
   } else {
@@ -127,14 +127,14 @@ void readPushButton() {
       prevButtonState = false;
 
       for (int i = 1; i < 5; i++) {
-        ledBoardOff(POLE * 2);
-        ledBoardOff((POLE * 2) - 1);
+        // ledBoardOff(POLE * 2);
+        // ledBoardOff((POLE * 2) - 1);
         allOn(100);
 
-        if (i != POLE) {
-          sendXbeeButtonOffEvent(i);
+        // if (i != POLE) {
+        //   sendXbeeButtonOffEvent(i);
 
-        }
+        // }
       }
     }
   }
